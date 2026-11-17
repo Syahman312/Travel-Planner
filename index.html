@@ -58,7 +58,7 @@ h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-
 @keyframes sheet{from{transform:translateY(100%)}}
 .dialog .card{overscroll-behavior:contain;max-height:92dvh}
 /* small phones (iPhone SE / mini) */
-@media(max-width:359px){header h1 span{display:none}main{padding-left:10px;padding-right:10px}.stat b{font-size:17px}}
+@media(max-width:359px){header h1 span{display:none}header h1 img{margin-right:0!important}main{padding-left:10px;padding-right:10px}.stat b{font-size:17px}}
 /* phones in landscape: slimmer bars */
 @media(orientation:landscape) and (max-height:500px){nav button{min-height:40px;flex-direction:row;justify-content:center;gap:6px;font-size:12px;padding:6px 2px}nav svg{width:18px;height:18px}header{position:static}}
 /* tablets & PCs: side navigation */
@@ -140,7 +140,7 @@ button.stat{text-align:left;width:100%;color:inherit;font:inherit;cursor:pointer
 </style>
 </head>
 <body>
-<header><h1>✈️ <span>Voyage</span></h1><button id="pill" class="pill" onclick="go('settings')" aria-label="Sync status"><i class="dot"></i><span>Local only</span></button><select id="tripSel" style="max-width:200px;min-width:0" aria-label="Current trip"></select><button class="btn sm" style="white-space:nowrap;flex:none" onclick="openTrip()">+ Trip</button></header>
+<header><h1><img src="icon.svg" alt="" width="28" height="28" style="vertical-align:-7px;border-radius:7px;margin-right:6px"><span>Voyage</span></h1><button id="pill" class="pill" onclick="go('settings')" aria-label="Sync status"><i class="dot"></i><span>Local only</span></button><select id="tripSel" style="max-width:200px;min-width:0" aria-label="Current trip"></select><button class="btn sm" style="white-space:nowrap;flex:none" onclick="openTrip()">+ Trip</button></header>
 <nav id="nav" aria-label="Sections"></nav>
 <main id="view"></main>
 
