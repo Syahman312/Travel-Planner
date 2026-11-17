@@ -3,14 +3,22 @@
 A single-file travel planner web app. No build step, no dependencies. Data is saved in your browser and can optionally sync to Google Sheets.
 
 ## Features
-- **Multiple trips**: switch between them from the header
-- **Overview**: countdown, trip length, budget used, packing progress, notes
-- **Itinerary**: activities grouped by day
-- **Budget**: expenses by category, with spent and remaining amounts
-- **Packing** checklist
-- **Bookings**: flight, hotel, car and other references, with links
-- **Settings**: Google Sheets sync (push and pull), JSON backup and import, delete a trip
-- Light and dark mode, works on phones
+- **Multiple trips**: upcoming and past trips, with yearly travel stats (trips, days away, total spent)
+- **Overview**: countdown, budget used, to-do and packing progress, notes
+- **Essentials**: hotel address with a big **Show to driver** screen (local-language address), emergency numbers, embassy, live local time and time difference, plug type, language and phrases
+- **Itinerary**: activities by day with map links. **Share** to WhatsApp, or save as a PDF
+- **Budget**: expenses in your home or the local currency (e.g. JPY), converted at the trip's rate (tap *Get today's rate*), plus a converter
+- **Lists**: pre-trip **to-do** list with due dates (visa, insurance, bank, eSIM, currency…) and a **packing** list in sections with templates (Basics, Beach, City, Winter, Business, Umrah / Hajj)
+- **Bookings & documents**: attach photos or PDFs of tickets and your passport. Stored on the device and optionally saved to **Google Drive**
+- **Tap any item to edit it**, and undo after deleting
+- **Auto-sync** to Google Sheets, with a status dot in the header
+- **Backup**: download and restore a file
+- **Works on every device**
+  - iPhone and Android: bottom tab bar, notch and home-bar safe areas, no zoom-on-tap, the right number keypad, Android back button closes pop-ups
+  - iPad, tablets and PC: sidebar navigation, two-column layout on wide screens, hover states
+  - Keyboard: `1`–`6` switch tabs, `N` new trip, `Enter` adds, `Esc` closes
+  - **Install to home screen** (Safari → Share → Add to Home Screen, or Chrome → Install app). Works offline after the first visit.
+  - Printable itinerary (browser Print)
 
 ## Run it
 Open `index.html` in a browser, or host it on GitHub Pages:
@@ -24,8 +32,13 @@ Open `index.html` in a browser, or host it on GitHub Pages:
 2. Paste the contents of [`Code.gs`](Code.gs) and save.
 3. **Deploy → New deployment → Web app**, Execute as **Me**, Who has access **Anyone**.
 4. Copy the `/exec` URL into the app: **Settings → Save URL**.
-5. **Push ↑** uploads this device's data. **Pull ↓** replaces this device's data with the copy in the sheet.
+5. Turn on **Auto-sync**. Changes save automatically, and opening the app on another device pulls the newest copy. **Push ↑** / **Pull ↓** do it by hand.
+6. Keep **Save attachments to Google Drive** on to upload booking photos and PDFs to *Google Drive → Voyage → trip name*. The files stay private to your account.
 
-The sheet gets readable **Trips / Itinerary / Expenses / Packing / Bookings** tabs, plus a hidden `_voyage` tab that holds the full data.
+The sheet gets readable **Trips / Itinerary / Expenses / To-do / Packing / Bookings / Essentials** tabs, plus a hidden `_voyage` tab that holds the full data.
+
+**Already deployed the old `Code.gs`?** Paste the new version, then **Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy**, and approve the new Google Drive permission. The URL stays the same.
+
+Photos are stored on each device, so another phone shows them as links to Drive instead. Backups don't include photos.
 
 > The URL lets anyone who has it read and overwrite your planner data, so keep it private.

@@ -6,28 +6,42 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Voyage">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Voyage – Travel Planner</title>
+<meta name="description" content="Plan trips: itinerary, budget with currency conversion, to-dos, packing lists, bookings with ticket photos. Syncs to Google Sheets & Drive.">
 <style>
 :root{color-scheme:dark;--bg:#000;--card:#0b0b0b;--c2:#16171a;--ink:#f0f0f0;--mute:#7d7d7d;--line:#1c1c1c;--line2:#24252a;--acc:#e8e8e8;--cy:#22e3ff;--warn:#f87171;--amb:#fbbf24;--ok:#4ade80}
 *{box-sizing:border-box}
-body{margin:0;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(80px + env(safe-area-inset-bottom))}
-header{position:sticky;top:0;z-index:5;background:#000;border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;gap:10px;align-items:center}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(84px + env(safe-area-inset-bottom));-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+body.lock{overflow:hidden}
+header{position:sticky;top:0;z-index:5;background:#000;border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 12px calc(16px + env(safe-area-inset-left));display:flex;gap:10px;align-items:center}
 header h1{font:600 18px system-ui,sans-serif;margin:0;flex:1;white-space:nowrap}header h1 span{color:var(--ink)}
 button,input,textarea,select{font:inherit;color:inherit}
-select,input,textarea{color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
-input[type=checkbox]{accent-color:var(--cy);width:20px!important;height:20px;padding:0}
+select,input,textarea{color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%;min-height:44px;font-size:16px;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:28px}
+input[type=date],input[type=time]{min-width:0}
+input[type=checkbox]{-webkit-appearance:auto;appearance:auto;accent-color:var(--cy);width:22px!important;height:22px;min-height:0;padding:0;flex:none}
 button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 textarea{min-height:60px}
-nav{position:fixed;bottom:0;left:0;right:0;z-index:4;display:flex;overflow-x:auto;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1 1 0;min-width:0;border:0;background:none;color:var(--mute);padding:15px 2px;font-size:12.5px;white-space:nowrap;cursor:pointer;border-radius:0}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:4;display:flex;background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+nav button{flex:1 1 0;min-width:0;border:0;background:none;color:var(--mute);padding:8px 2px 9px;font-size:11px;white-space:nowrap;cursor:pointer;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:52px}
+nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{color:var(--acc);box-shadow:inset 0 3px var(--acc);font-weight:600}
-main{max-width:720px;margin:0 auto;padding:14px}
+main{max-width:720px;margin:0 auto;padding:14px calc(14px + env(safe-area-inset-right)) 14px calc(14px + env(safe-area-inset-left))}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
 .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 140px}
 .btn{border:0;background:var(--acc);color:var(--bg);border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
 .btn:active{transform:scale(.97)}
 .btn.ghost{background:transparent;color:var(--acc);border:1px solid var(--line2)}.btn.sm{padding:6px 12px;font-size:13.5px}
-.x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px}
+.x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px;min-width:44px;min-height:44px;margin:-8px -10px -8px 0;border-radius:10px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
 .stat{background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:10px 12px}.stat b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.stat small{color:var(--mute)}
 .item{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line2)}.item:first-child{border-top:0}
@@ -42,122 +56,484 @@ h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-
 @media(max-width:759px){.dialog{align-items:flex-end;padding:0}.dialog .card{max-width:100%;border-radius:22px 22px 0 0;margin:0;padding:8px 16px calc(18px + env(safe-area-inset-bottom));animation:sheet .28s cubic-bezier(.2,.8,.2,1)}
 .dialog .card::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:var(--line2);margin:0 auto 12px}}
 @keyframes sheet{from{transform:translateY(100%)}}
+.dialog .card{overscroll-behavior:contain;max-height:92dvh}
+/* small phones (iPhone SE / mini) */
+@media(max-width:359px){header h1 span{display:none}main{padding-left:10px;padding-right:10px}.stat b{font-size:17px}}
+/* phones in landscape: slimmer bars */
+@media(orientation:landscape) and (max-height:500px){nav button{min-height:40px;flex-direction:row;justify-content:center;gap:6px;font-size:12px;padding:6px 2px}nav svg{width:18px;height:18px}header{position:static}}
+/* tablets & PCs: side navigation */
+@media(min-width:744px){
+ body{padding-bottom:24px;padding-left:200px}
+ nav{top:0;right:auto;width:200px;flex-direction:column;gap:2px;border-top:0;border-right:1px solid var(--line);padding:calc(76px + env(safe-area-inset-top)) 12px 16px calc(12px + env(safe-area-inset-left));background:var(--card)}
+ nav button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;font-size:15px;padding:11px 14px;border-radius:10px;min-height:44px}
+ nav button.on{box-shadow:none;background:var(--c2)}
+ nav svg{width:20px;height:20px}
+ main{max-width:1100px;padding:20px 28px}
+ #tripSel{max-width:280px!important}
+}
+/* large screens: two-column card layout */
+@media(min-width:1100px){
+ body{padding-left:220px}nav{width:220px}
+ main{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
+ main>.full,main>.stats,main>.empty{grid-column:1/-1}
+ main>.stats{margin-bottom:8px}main>.card[style*="margin-top"]{margin-top:0!important}
+}
+/* mouse & trackpad */
+@media(hover:hover){.btn:hover{filter:brightness(1.12)}.btn.ghost:hover{background:var(--c2)}nav button:hover{color:var(--ink)}nav button.on:hover{color:var(--acc)}.x:hover{color:var(--warn);background:var(--c2)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- v2 components ---- */
+a{color:var(--cy)}
+button.stat{text-align:left;width:100%;color:inherit;font:inherit;cursor:pointer}
+.pill{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:99px;background:var(--c2);border:1px solid var(--line2);font:500 12.5px system-ui,sans-serif;color:#8d8f97;white-space:nowrap;cursor:pointer;flex:none}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:#5c5e66;flex:none}
+.pill.ok .dot{background:var(--ok)}.pill.busy .dot,.pill.pending .dot{background:#60a5fa;animation:pulse 1s infinite}.pill.err .dot{background:var(--warn)}.pill.offline .dot{background:var(--amb)}
+@keyframes pulse{50%{opacity:.3}}
+@media(max-width:519px){.pill span{display:none}.pill{padding:0;width:32px;justify-content:center}}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.f{display:block;margin:0 0 12px;min-width:0}.f.w{grid-column:1/-1}.f>span{display:block;font-size:12.5px;color:var(--mute);margin-bottom:5px;font-weight:600}
+.bad{border-color:var(--warn)!important}
+.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.mt{margin-top:10px}
+.btn.danger{color:var(--warn);border-color:#3a1c1c}
+.item.tap{cursor:pointer}.item.tap:active{opacity:.6}
+.files{display:flex;gap:8px;flex-wrap:wrap}
+.thumb{position:relative;width:76px;height:76px;border-radius:10px;border:1px solid var(--line2);background:var(--c2);overflow:hidden;display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--mute);flex:none}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb .tb{position:absolute;inset:0;background:none;border:0;cursor:pointer;min-height:0}
+.thumb .rm{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;border:0;background:#000b;color:#fff;font-size:12px;cursor:pointer;padding:0}
+.thumb .cl{position:absolute;left:5px;bottom:2px;font-style:normal;color:var(--cy);font-size:14px;text-shadow:0 0 3px #000}
+.thumb.add{cursor:pointer;border-style:dashed;text-align:center;line-height:1.1;font-size:22px;font-weight:400}.thumb.add small{font-size:11px}
+.mini{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.mini .thumb{width:46px;height:46px;font-size:10px}
+.seg{display:flex;background:var(--c2);border:1px solid var(--line2);border-radius:12px;padding:3px;gap:3px;margin-bottom:8px}
+.seg button{flex:1;border:0;background:none;color:var(--mute);padding:9px;border-radius:9px;font-weight:600;cursor:pointer}.seg button.on{background:var(--acc);color:#000}
+.chk label{display:flex;gap:12px;align-items:center;cursor:pointer;min-height:36px}
+.due{font-size:12px;white-space:nowrap;color:var(--mute)}.due.over{color:var(--warn)}.due.soon{color:var(--amb)}
+.ess{display:grid;grid-template-columns:26px 1fr;gap:10px 6px;align-items:start}.ess>i{font-style:normal;text-align:center}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;cursor:pointer}
+.switch input{appearance:none;-webkit-appearance:none;width:50px!important;height:30px;min-height:0;border-radius:99px;background:var(--line2);position:relative;padding:0;flex:none;border:0;cursor:pointer;transition:.2s}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s}
+.switch input:checked{background:var(--cy)}.switch input:checked::after{left:23px}
+.share{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;font:13px/1.45 ui-monospace,Menlo,Consolas,monospace;max-height:38vh;overflow:auto;margin:0 0 12px}
+.warnbox{border-color:#4a3410;color:var(--amb)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom));background:#1a1a1a;border:1px solid #333;padding:6px 6px 6px 16px;border-radius:99px;display:none;gap:12px;align-items:center;z-index:12;font-size:14px;white-space:nowrap;box-shadow:0 6px 20px #000c}
+#toast.on{display:flex}#toast button{padding:7px 14px}
+@media(min-width:744px){#toast{bottom:24px;margin-left:100px}}
+.viewer{position:fixed;inset:0;z-index:30;background:#000;display:none;flex-direction:column}.viewer.on{display:flex}
+.vbar{display:flex;gap:8px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 10px calc(12px + env(safe-area-inset-left));border-bottom:1px solid var(--line)}
+.vbar span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vbar a{text-decoration:none}
+.vbody{flex:1;overflow:auto;display:grid;place-items:center;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.vbody img{max-width:100%;max-height:calc(100dvh - 90px);object-fit:contain}
+.driver{position:fixed;inset:0;z-index:30;background:#fff;color:#000;display:none;flex-direction:column;justify-content:center;gap:18px;padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));text-align:center;cursor:pointer}
+.driver.on{display:flex}.driver .big{font-size:clamp(28px,7vw,60px);font-weight:700;line-height:1.25;overflow-wrap:anywhere}.driver .sm{font-size:clamp(18px,4vw,28px);color:#333}
+.kbd{font:12px ui-monospace,Menlo,monospace;border:1px solid var(--line2);border-radius:5px;padding:1px 6px;background:var(--c2)}
+@media(min-width:1100px){main>.seg{grid-column:1/-1}}
+@media(hover:none){.pc-only{display:none}}
+#printView{display:none}
+@media print{
+ body>*:not(#printView){display:none!important}
+ #printView{display:block;color:#000;font:11pt/1.45 system-ui,sans-serif}
+ #printView h1{font-size:20pt;margin:0}#printView h2{font-size:13pt;border-bottom:2px solid #000;padding-bottom:3px;margin:18px 0 6px}
+ #printView h3{font-size:11pt;margin:12px 0 4px}#printView table{width:100%;border-collapse:collapse}
+ #printView td{padding:4px 6px;border-bottom:1px solid #ddd;vertical-align:top}#printView td:first-child{width:70px;white-space:nowrap;color:#444}
+ #printView .p{color:#555}#printView section{break-inside:avoid}
+}
 </style>
 </head>
 <body>
-<header><h1>✈️ <span>Voyage</span></h1><select id="tripSel" style="max-width:200px;min-width:0"></select><button class="btn sm" style="white-space:nowrap;flex:none" onclick="openTrip()">+ Trip</button></header>
-<nav id="nav"></nav>
+<header><h1>✈️ <span>Voyage</span></h1><button id="pill" class="pill" onclick="go('settings')" aria-label="Sync status"><i class="dot"></i><span>Local only</span></button><select id="tripSel" style="max-width:200px;min-width:0" aria-label="Current trip"></select><button class="btn sm" style="white-space:nowrap;flex:none" onclick="openTrip()">+ Trip</button></header>
+<nav id="nav" aria-label="Sections"></nav>
 <main id="view"></main>
 
-<div class="dialog" id="dlg" onclick="if(event.target===this)closeDlg()"><div class="card" id="dlgBody"></div></div>
+<div class="dialog" id="dlg" onclick="if(event.target===this)closeDlg()"><div class="card" id="dlgBody" role="dialog" aria-modal="true"></div></div>
+<div id="toast" role="status"><span id="toastMsg"></span><button class="btn sm" id="toastBtn">Undo</button></div>
+<div class="viewer" id="viewer"><div class="vbar"><span id="vName"></span><span id="vLinks" style="flex:none;display:flex;gap:8px"></span><button class="btn sm" onclick="closeViewer()">Close</button></div><div class="vbody" id="vBody" onclick="if(event.target===this)closeViewer()"></div></div>
+<div class="driver" id="driver" onclick="closeDriver()"></div>
+<div id="printView"></div>
 
 <script>
 const KEY='voyage_v1';
-const TABS=[['overview','Overview'],['itin','Itinerary'],['budget','Budget'],['pack','Packing'],['book','Bookings'],['settings','Settings']];
+const TABS=[['overview','Overview'],['itin','Itinerary'],['budget','Budget'],['pack','Lists'],['book','Bookings'],['settings','Settings']];
+const ICO={overview:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',itin:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',budget:'<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/>',pack:'<path d="M9 11l2 2 4-4"/><rect x="4" y="4" width="16" height="16" rx="3"/>',book:'<path d="M4 8a2 2 0 0 0 0 4v4h16v-4a2 2 0 0 1 0-4V4H4zM14 4v12"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'};
 const CATS=['Flight','Hotel','Food','Transport','Activity','Shopping','Other'];
-let S=load(),tab='overview';
-function load(){try{return JSON.parse(localStorage.getItem(KEY))||seed()}catch(e){return seed()}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render()}
+const BTYPES=['Flight','Hotel','Car','Train','Bus','Ferry','Tour','Insurance','Visa','Passport','Document','Other'];
+const SECS=['Documents','Electronics','Clothing','Toiletries','Health','Worship','Other'];
+const CCYS='MYR SGD THB IDR BND PHP VND KHR LAK MMK JPY KRW CNY HKD MOP TWD INR LKR MVR NPR AUD NZD USD CAD GBP EUR CHF SEK NOK DKK ISK TRY SAR AED QAR OMR KWD BHD JOD EGP MAR ZAR'.split(' ');
+const PLUGS=['Type A/B (Japan, US, Canada) · 100–120V','Type C/F (Europe, Korea, Indonesia) · 230V','Type G (Malaysia, Singapore, UK, HK) · 230V','Type I (Australia, NZ, China) · 230V','Type C/G (Saudi Arabia, UAE) · 220–230V','Type A/C/O (Thailand) · 230V'];
+const TEMPLATES={
+ 'Basics':[['Documents',['Passport','IC / ID card','Flight tickets','Hotel confirmation','Travel insurance','Cash & cards','Copies of documents']],['Electronics',['Phone charger','Power bank','Travel adapter','Earphones','Charging cables']],['Clothing',['Underwear','Socks','Sleepwear','Tops','Bottoms']],['Toiletries',['Toothbrush & toothpaste','Deodorant','Skincare','Shampoo (travel size)']],['Health',['Personal medication','Basic first aid','Hand sanitiser','Face masks']]],
+ 'Beach':[['Clothing',['Swimwear','Hat','Flip-flops','Cover-up']],['Toiletries',['Sunscreen','After-sun / aloe']],['Other',['Sunglasses','Beach towel','Dry bag','Waterproof phone pouch']]],
+ 'City':[['Clothing',['Comfortable walking shoes','Light jacket']],['Electronics',['Camera']],['Other',['Day bag','Compact umbrella','Reusable water bottle','Transit card']]],
+ 'Winter':[['Clothing',['Thermal innerwear','Down jacket','Gloves','Beanie','Scarf','Wool socks','Waterproof boots']],['Toiletries',['Lip balm','Rich moisturiser']],['Other',['Heat packs']]],
+ 'Business':[['Clothing',['Formal attire','Formal shoes','Belt']],['Electronics',['Laptop & charger','Presentation clicker / USB','HDMI / USB-C adapter']],['Documents',['Business cards','Invitation letter']],['Other',['Notebook & pen']]],
+ 'Umrah / Hajj':[['Documents',['Umrah / Hajj visa','Meningococcal vaccination certificate','Nusuk app / permits']],['Worship',['Ihram (2 sets)','Ihram belt','Telekung / prayer garments','Prayer mat','Pocket Quran / doa book','Tasbih','Pebble pouch (Hajj)']],['Clothing',['Comfortable sandals','Shoe bag']],['Toiletries',['Unscented soap & shampoo','Unscented deodorant','Nail clipper']],['Other',['Water spray bottle','Umbrella','Small sling bag']]]};
+const TODOS=[['Check passport is valid 6+ months',60],['Apply for visa / e-visa',45],['Buy travel insurance',30],['Book airport transfer',14],['Tell bank / enable overseas card use',7],['Buy eSIM or roaming plan',7],['Exchange currency',5],['Download offline maps',2],['Online check-in',1]];
+
+let S,tab='overview',sub='todo',D=null;
+function migrate(s){
+ if(!s||!Array.isArray(s.trips))return null;
+ const okId=x=>typeof x==='string'&&/^[\w-]{1,40}$/.test(x)?x:uid();
+ s.trips.forEach(t=>{t.id=okId(t.id);t.ccy=t.ccy||'MYR';t.lcy=t.lcy||'';t.fx=+t.fx||0;t.notes=t.notes||'';t.ess=t.ess||{};
+  ['itin','exp','pack','book','todo'].forEach(k=>{t[k]=Array.isArray(t[k])?t[k]:[];t[k].forEach(x=>x.id=okId(x.id))});
+  t.exp.forEach(e=>e.cur=e.cur||t.ccy);t.pack.forEach(p=>p.sec=p.sec||'Other');
+  t.book.forEach(b=>{b.files=Array.isArray(b.files)?b.files:[];b.files.forEach(f=>{f.id=okId(f.id);delete f.up})})});
+ s.sync=s.sync||'';s.auto=!!s.auto;s.drive=s.drive!==false;s.updated=+s.updated||0;
+ if(!s.trips.some(t=>t.id===s.cur))s.cur=s.trips[0]?.id;return s}
+function load(){try{return migrate(JSON.parse(localStorage.getItem(KEY)))||seed()}catch(e){return seed()}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Storage full – could not save')}}
+function save(){S.updated=Date.now();persist();render();queueSync()}
 function uid(){return Math.random().toString(36).slice(2,9)}
-function seed(){const id=uid();return{cur:id,sync:'',trips:[{id,name:'Sample: Tokyo',dest:'Tokyo, Japan',start:'2027-03-10',end:'2027-03-15',budget:6000,ccy:'MYR',notes:'',
- itin:[{id:uid(),date:'2027-03-10',time:'09:00',what:'Flight KUL → HND',where:'KLIA'},{id:uid(),date:'2027-03-11',time:'10:00',what:'Senso-ji & Asakusa',where:'Asakusa'}],
- exp:[{id:uid(),date:'2027-01-05',cat:'Flight',desc:'Return tickets',amt:1800,paid:true}],
- pack:['Passport','Power adapter','Charger','Medication','Jacket'].map(t=>({id:uid(),t,ok:false})),
- book:[{id:uid(),type:'Flight',ref:'ABC123',detail:'MH88, 10 Mar 09:00',link:''}]}]}}
+function seed(){const id=uid(),start='2027-03-10';return migrate({cur:id,trips:[{id,name:'Sample: Tokyo',dest:'Tokyo, Japan',start,end:'2027-03-15',budget:6000,ccy:'MYR',lcy:'JPY',fx:33,notes:'',
+ ess:{hotel:'Hotel Gracery Shinjuku',addr:'1-19-1 Kabukicho, Shinjuku, Tokyo',addrLocal:'東京都新宿区歌舞伎町1-19-1 ホテルグレイスリー新宿',phone:'+81 3-6833-2489',emerg:'Police 110 · Ambulance/Fire 119',embassy:'Embassy of Malaysia, 20-16 Nanpeidaicho, Shibuya · +81 3-3476-3840',tz:'Asia/Tokyo',plug:PLUGS[0],lang:'Japanese',phrases:'Thank you – Arigatou gozaimasu\nExcuse me – Sumimasen\nHow much? – Ikura desu ka?'},
+ itin:[{id:uid(),date:start,time:'09:00',what:'Flight KUL → HND',where:'KLIA',note:''},{id:uid(),date:'2027-03-11',time:'10:00',what:'Senso-ji & Asakusa',where:'Senso-ji, Asakusa',note:''}],
+ exp:[{id:uid(),date:'2027-01-05',cat:'Flight',desc:'Return tickets',amt:1800,cur:'MYR'},{id:uid(),date:'2027-03-11',cat:'Food',desc:'Sushi lunch',amt:3200,cur:'JPY'}],
+ pack:tplItems(['Basics','City']),todo:sugTodos(start),
+ book:[{id:uid(),type:'Flight',ref:'ABC123',date:start,detail:'MH88, 10 Mar 09:00',link:'',files:[]}]}]})}
+function tplItems(names,have=[]){const seen=new Set(have.map(p=>p.t.toLowerCase())),out=[];names.forEach(n=>TEMPLATES[n].forEach(([sec,items])=>items.forEach(t=>{if(!seen.has(t.toLowerCase())){seen.add(t.toLowerCase());out.push({id:uid(),t,sec,ok:false})}})));return out}
+function sugTodos(start,have=[]){const seen=new Set(have.map(x=>x.t.toLowerCase()));return TODOS.filter(([t])=>!seen.has(t.toLowerCase())).map(([t,d])=>({id:uid(),t,due:start?addDays(start,-d):'',ok:false}))}
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
 const T=()=>S.trips.find(t=>t.id===S.cur)||S.trips[0];
-const fmt=n=>(T()?.ccy||'MYR')+' '+Number(n||0).toLocaleString(undefined,{maximumFractionDigits:2});
-const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const days=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
 const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const addDays=(d,n)=>{const x=new Date(d+'T12:00');x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
 const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
+const num=(n,dp=2)=>Number(n||0).toLocaleString(undefined,{maximumFractionDigits:dp});
+const money=(n,c)=>(c||T()?.ccy||'MYR')+' '+num(n);
+const fmt=n=>money(n,T()?.ccy);
+const fmtD=(d,o={weekday:'short',day:'numeric',month:'short'})=>d?new Date(d+'T00:00').toLocaleDateString('en-GB',o):'';
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const maps=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+const tel=s=>esc(s).replace(/\+?\d[\d -]{1,15}\d/g,m=>m.replace(/\D/g,'').length<6?m:`<a href="tel:${m.replace(/[^\d+]/g,'')}">${m}</a>`);
+const val=id=>($(id)?.value||'').trim();
+const home=(t,e)=>e.cur&&e.cur!==t.ccy&&e.cur===t.lcy?(t.fx>0?e.amt/t.fx:e.amt):+e.amt;
+const spentOf=t=>t.exp.reduce((a,e)=>a+home(t,e),0);
+const tripLen=t=>days(t.start,t.end)+1;
+const isPast=t=>t.end<today();
+function tzNow(tz){try{return new Date().toLocaleTimeString('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
+function tzDiff(tz){try{const d=new Date(),m=Math.round((new Date(d.toLocaleString('en-US',{timeZone:tz}))-new Date(d.toLocaleString('en-US')))/6e4);if(!m)return 'same time as you';const h=Math.abs(m)/60,s=(Number.isInteger(h)?h:h.toFixed(1))+'h';return s+(m>0?' ahead of you':' behind you')}catch(e){return ''}}
+const dlgOpen=()=>$('dlg').classList.contains('on');
 
+S=load();
+
+/* ---------- render ---------- */
 function render(){
- const sel=document.getElementById('tripSel');
- sel.innerHTML=S.trips.map(t=>`<option value="${t.id}" ${t.id===S.cur?'selected':''}>${esc(t.name)}</option>`).join('')||'<option>No trips</option>';
- sel.onchange=e=>{S.cur=e.target.value;save()};
- document.getElementById('nav').innerHTML=TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
- const t=T(),v=document.getElementById('view');
- if(!t&&tab!=='settings'){v.innerHTML='<div class="card empty">No trips yet. Tap “+ Trip” to start.</div>';return}
- v.innerHTML=({overview,itin,budget,pack,book,settings})[tab](t);
+ const sel=$('tripSel'),up=S.trips.filter(t=>!isPast(t)).sort((a,b)=>a.start.localeCompare(b.start)),past=S.trips.filter(isPast).sort((a,b)=>b.start.localeCompare(a.start));
+ const opt=t=>`<option value="${t.id}" ${t.id===S.cur?'selected':''}>${esc(t.name)}</option>`;
+ sel.innerHTML=S.trips.length?(up.length?`<optgroup label="Upcoming & current">${up.map(opt).join('')}</optgroup>`:'')+(past.length?`<optgroup label="Past trips">${past.map(opt).join('')}</optgroup>`:''):'<option>No trips</option>';
+ sel.onchange=e=>setCur(e.target.value);
+ $('nav').innerHTML=TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" ${k===tab?'aria-current="page"':''} onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg><span>${l}</span></button>`).join('');
+ const t=T(),v=$('view');
+ if(!t&&tab!=='settings')v.innerHTML='<div class="card empty">No trips yet. Tap “+ Trip” to start.</div>';
+ else v.innerHTML=({overview,itin,budget,pack:lists,book,settings})[tab](t);
+ drawPill();hydrate(v);
 }
-function go(k){tab=k;try{location.hash=k}catch(e){}render()}
+function setCur(id){S.cur=id;persist();render()}
+function go(k){if(k===tab)return scrollTo({top:0,behavior:'smooth'});tab=k;try{history.pushState(null,'','#'+k)}catch(e){}render();scrollTo(0,0)}
 
+/* ---------- overview ---------- */
 function overview(t){
- const spent=t.exp.reduce((a,e)=>a+ +e.amt,0),pct=t.budget?Math.min(100,spent/t.budget*100):0;
- const till=days(today(),t.start),len=days(t.start,t.end)+1;
- const packed=t.pack.filter(p=>p.ok).length;
- const up=S.trips.slice().sort((a,b)=>a.start.localeCompare(b.start));
- return `<div class="card"><div class="row" style="align-items:center"><div><h2 style="margin:0">${esc(t.name)}</h2><div class="mute">📍 ${esc(t.dest)} · ${esc(t.start)} → ${esc(t.end)}</div></div>
- <div style="flex:0"><button class="btn ghost sm" onclick="openTrip('${t.id}')">Edit</button></div></div></div>
+ const spent=spentOf(t),pct=t.budget?Math.min(100,spent/t.budget*100):0,till=days(today(),t.start),len=tripLen(t);
+ const packed=t.pack.filter(p=>p.ok).length,tdone=t.todo.filter(x=>x.ok).length,over=t.todo.filter(x=>!x.ok&&x.due&&x.due<today()).length;
+ return `<div class="card full"><div class="row" style="align-items:center"><div style="flex:1 1 200px"><h2 style="margin:0">${esc(t.name)}</h2><div class="mute">📍 ${esc(t.dest)} · ${fmtD(t.start)} → ${fmtD(t.end,{day:'numeric',month:'short',year:'numeric'})}</div></div>
+ <div class="btns" style="flex:0 0 auto"><button class="btn ghost sm" onclick="openShare()">Share</button><button class="btn ghost sm" onclick="openTrip('${t.id}')">Edit</button></div></div></div>
  <div class="stats">
- <div class="stat"><small>Countdown</small><b>${till>0?till+' days':till>-len?'On trip 🎉':'Done'}</b></div>
+ <div class="stat"><small>Countdown</small><b>${till>0?till+(till===1?' day':' days'):till>-len?'On trip 🎉':'Done'}</b></div>
  <div class="stat"><small>Duration</small><b>${len} days</b></div>
- <div class="stat"><small>Spent / Budget</small><b>${Math.round(pct)}%</b><div class="bar"><i style="width:${pct}%;background:${pct>90?'var(--warn)':pct>75?'var(--amb)':'var(--cy)'}"></i></div><small>${fmt(spent)} of ${fmt(t.budget)}</small></div>
- <div class="stat"><small>Packed</small><b>${packed}/${t.pack.length}</b></div></div>
- <div class="card" style="margin-top:12px"><h2>Notes</h2><textarea id="tNotes" placeholder="Visa info, emergency contacts, ideas…" onchange="T().notes=this.value;save()">${esc(t.notes)}</textarea></div>
- <div class="card"><h2>All trips</h2>${up.map(x=>`<div class="item"><div class="grow"><b>${esc(x.name)}</b><div class="mute">${esc(x.dest)} · ${esc(x.start)}</div></div><button class="btn ghost sm" onclick="S.cur='${x.id}';save()">Open</button></div>`).join('')}</div>`;
+ <button class="stat" onclick="go('budget')"><small>Spent / Budget</small><b>${Math.round(pct)}%</b><div class="bar"><i style="width:${pct}%;background:${pct>90?'var(--warn)':pct>75?'var(--amb)':'var(--cy)'}"></i></div><small>${fmt(spent)} of ${fmt(t.budget)}</small></button>
+ <button class="stat" onclick="sub='todo';go('pack')"><small>To-do</small><b>${tdone}/${t.todo.length}</b>${over?`<small style="color:var(--warn)">${over} overdue</small>`:''}</button>
+ <button class="stat" onclick="sub='pack';go('pack')"><small>Packed</small><b>${packed}/${t.pack.length}</b></button></div>
+ ${essCard(t)}
+ <div class="card"><h2>Notes</h2><textarea id="tNotes" placeholder="Ideas, reminders…" onchange="T().notes=this.value;save()">${esc(t.notes)}</textarea></div>
+ ${tripsCard()}${statsCard()}`;
 }
+function essCard(t){const e=t.ess||{},has=Object.values(e).some(Boolean);
+ if(!has)return `<div class="card"><h2>Essentials</h2><p class="mute" style="margin:0 0 10px">Hotel address (with a big “show to driver” view), emergency numbers, embassy, time difference, plug type and language.</p><button class="btn" onclick="editEss()">Add essentials</button></div>`;
+ const r=(i,h)=>h?`<i>${i}</i><div>${h}</div>`:'';
+ return `<div class="card"><div class="row" style="align-items:center;margin-bottom:10px"><h2 style="margin:0">Essentials</h2><div style="flex:0 0 auto"><button class="btn ghost sm" onclick="editEss()">Edit</button></div></div><div class="ess">
+ ${r('🏨',e.hotel||e.addr?`<b>${esc(e.hotel)}</b>${e.addr?`<div class="mute"><a href="${maps(e.addr)}" target="_blank" rel="noopener">${esc(e.addr)}</a></div>`:''}${e.phone?`<div class="mute">${tel(e.phone)}</div>`:''}<div class="btns" style="margin-top:6px"><button class="btn sm" onclick="showDriver()">Show to driver</button></div>`:'')}
+ ${r('🚨',e.emerg&&`<b>Emergency</b><div class="mute">${tel(e.emerg)}</div>`)}
+ ${r('🏛',e.embassy&&`<b>Embassy</b><div class="mute">${tel(e.embassy)}</div>`)}
+ ${r('🕒',e.tz&&`<b>Local time <span id="lt">${tzNow(e.tz)}</span></b><div class="mute">${esc(e.tz.replace(/_/g,' '))} · ${tzDiff(e.tz)}</div>`)}
+ ${r('🔌',e.plug&&`<b>Plug</b><div class="mute">${esc(e.plug)}</div>`)}
+ ${r('🗣',(e.lang||e.phrases)&&`<b>${esc(e.lang||'Phrases')}</b>${e.phrases?`<div class="mute" style="white-space:pre-line">${esc(e.phrases)}</div>`:''}`)}
+ </div></div>`}
+function tripsCard(){
+ const up=S.trips.filter(t=>!isPast(t)).sort((a,b)=>a.start.localeCompare(b.start)),past=S.trips.filter(isPast).sort((a,b)=>b.start.localeCompare(a.start));
+ const row=x=>`<div class="item tap" onclick="setCur('${x.id}');scrollTo(0,0)"><div class="grow"><b>${esc(x.name)}</b>${x.id===S.cur?' <span class="tag">open</span>':''}<div class="mute">${esc(x.dest)} · ${fmtD(x.start,{day:'numeric',month:'short',year:'numeric'})} · ${tripLen(x)} days</div></div><span class="mute">›</span></div>`;
+ return `<div class="card"><h2>Upcoming & current</h2>${up.map(row).join('')||'<div class="empty">Nothing planned – tap “+ Trip”.</div>'}
+ ${past.length?`<h2 style="margin-top:16px">Past trips</h2>${past.map(row).join('')}`:''}</div>`}
+function statsCard(){
+ const by={};S.trips.forEach(t=>{const y=t.start.slice(0,4);const o=by[y]=by[y]||{n:0,d:0,sp:{},dest:new Set};o.n++;o.d+=tripLen(t);o.dest.add(t.dest);o.sp[t.ccy]=(o.sp[t.ccy]||0)+spentOf(t)});
+ const ys=Object.keys(by).sort().reverse();if(!ys.length)return '';
+ return `<div class="card"><h2>Travel stats</h2>${ys.map(y=>{const o=by[y];return `<div class="item"><div class="grow"><b>${y}</b><div class="mute">${o.n} trip${o.n>1?'s':''} · ${o.d} days away · ${o.dest.size} destination${o.dest.size>1?'s':''}</div></div><b>${Object.entries(o.sp).map(([c,a])=>money(a,c)).join('<br>')}</b></div>`}).join('')}</div>`}
+
+/* ---------- essentials ---------- */
+const ESS=[{k:'hotel',l:'Hotel / stay name'},{k:'phone',l:'Hotel phone',t:'tel'},{k:'addr',l:'Address'},{k:'addrLocal',l:'Address in local language (shown to driver)',t:'area'},{k:'emerg',l:'Emergency numbers',ph:'Police 999 · Ambulance 991'},{k:'embassy',l:'Embassy / consulate',t:'area'},{k:'tz',l:'Time zone',t:'list',o:()=>Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[],ph:'e.g. Asia/Tokyo'},{k:'plug',l:'Plug type & voltage',t:'list',o:()=>PLUGS},{k:'lang',l:'Language',h:1},{k:'phrases',l:'Useful phrases',t:'area'}];
+function editEss(){const e=T().ess;dlg(`<h2>Essentials</h2><div class="form">${ESS.map(f=>field(f,e[f.k]??'')).join('')}</div><div class="btns"><button class="btn" onclick="saveEss()">Save</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`)}
+function saveEss(){const t=T();ESS.forEach(f=>t.ess[f.k]=val('f_'+f.k));closeDlg();save()}
+function showDriver(){const e=T().ess;$('driver').innerHTML=`<div class="big">${esc(e.addrLocal||e.addr)}</div>${e.hotel?`<div class="sm"><b>${esc(e.hotel)}</b></div>`:''}${e.addrLocal&&e.addr?`<div class="sm">${esc(e.addr)}</div>`:''}${e.phone?`<div class="sm">☎ ${esc(e.phone)}</div>`:''}<div style="color:#888;font-size:14px">Tap anywhere to close</div>`;
+ $('driver').classList.add('on');try{navigator.wakeLock?.request('screen').then(l=>window._wl=l).catch(()=>{})}catch(x){}}
+function closeDriver(){$('driver').classList.remove('on');try{window._wl?.release()}catch(x){}}
+
+/* ---------- itinerary ---------- */
 function itin(t){
- const by={};t.itin.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
- return `<div class="card"><h2>Add activity</h2><div class="row"><input type="date" id="iD" value="${t.start}"><input type="time" id="iT"><input id="iW" placeholder="What"><input id="iP" placeholder="Where"></div>
- <div style="margin-top:8px"><button class="btn" onclick="addItin()">Add</button></div></div>
- ${Object.keys(by).length?Object.entries(by).map(([d,l])=>`<div class="card"><h2>Day ${days(t.start,d)+1} · ${new Date(d+'T00:00').toDateString()}</h2>${l.map(i=>`<div class="item"><span class="tag">${esc(i.time)||'—'}</span><div class="grow"><b>${esc(i.what)}</b><div class="mute">${esc(i.where)}</div></div><button class="x" onclick="del('itin','${i.id}')">✕</button></div>`).join('')}</div>`).join(''):'<div class="card empty">No activities yet.</div>'}`;
+ const by={};t.itin.slice().sort((a,b)=>(a.date+(a.time||'99')).localeCompare(b.date+(b.time||'99'))).forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
+ return `<div class="card full"><div class="btns"><button class="btn" onclick="editItem('itin')">+ Add activity</button><button class="btn ghost" onclick="openShare()">Share / PDF</button></div></div>
+ ${Object.keys(by).length?Object.entries(by).map(([d,l])=>`<div class="card"><h2>Day ${days(t.start,d)+1} · ${fmtD(d)}${d===today()?' <span class="tag">today</span>':''}</h2>${l.map(i=>`<div class="item tap" onclick="editItem('itin','${i.id}')"><span class="tag">${esc(i.time)||'—'}</span><div class="grow"><b>${esc(i.what)}</b>${i.where?`<div class="mute"><a href="${maps(i.where+(t.dest?', '+t.dest:''))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📍 ${esc(i.where)}</a></div>`:''}${i.note?`<div class="mute" style="white-space:pre-line">${esc(i.note)}</div>`:''}</div><span class="mute">›</span></div>`).join('')}</div>`).join(''):'<div class="card empty">No activities yet.</div>'}`;
 }
-function addItin(){const w=val('iW');if(!w)return;T().itin.push({id:uid(),date:val('iD'),time:val('iT'),what:w,where:val('iP')});save()}
+
+/* ---------- budget ---------- */
 function budget(t){
- const spent=t.exp.reduce((a,e)=>a+ +e.amt,0),byC={};t.exp.forEach(e=>byC[e.cat]=(byC[e.cat]||0)+ +e.amt);
+ const spent=spentOf(t),byC={};t.exp.forEach(e=>byC[e.cat]=(byC[e.cat]||0)+home(t,e));
+ const noRate=t.lcy&&!(t.fx>0)&&t.exp.some(e=>e.cur===t.lcy);
  return `<div class="stats"><div class="stat"><small>Budget</small><b>${fmt(t.budget)}</b></div><div class="stat"><small>Spent</small><b>${fmt(spent)}</b></div><div class="stat"><small>Remaining</small><b style="color:${t.budget-spent<0?'var(--warn)':'var(--ok)'}">${fmt(t.budget-spent)}</b></div></div>
- <div class="card" style="margin-top:12px"><h2>Add expense</h2><div class="row"><input type="date" id="eD" value="${today()}"><select id="eC">${CATS.map(c=>`<option>${c}</option>`).join('')}</select><input id="eS" placeholder="Description"><input id="eA" type="number" step="0.01" placeholder="Amount"></div>
- <div style="margin-top:8px"><button class="btn" onclick="addExp()">Add</button></div></div>
+ ${noRate?`<div class="card warnbox full">⚠️ Some expenses are in ${esc(t.lcy)} but no exchange rate is set. <a href="#" onclick="openTrip('${t.id}');return false">Set rate</a></div>`:''}
+ <div class="card" style="margin-top:8px"><div class="btns"><button class="btn" onclick="editItem('exp')">+ Add expense</button></div>
+ ${t.lcy?`<h2 style="margin-top:14px">Converter</h2><div class="mute" style="margin-bottom:8px">${t.fx>0?`1 ${esc(t.ccy)} = ${num(t.fx,4)} ${esc(t.lcy)}`:'No rate set'} · <a href="#" onclick="openTrip('${t.id}');return false">change</a></div>
+ <div class="row"><label class="f"><span>${esc(t.lcy)}</span><input id="cvL" type="number" inputmode="decimal" step="any" oninput="cv('L')"></label><label class="f"><span>${esc(t.ccy)}</span><input id="cvH" type="number" inputmode="decimal" step="any" oninput="cv('H')"></label></div>`:`<p class="mute" style="margin:10px 0 0">Spending in another currency? <a href="#" onclick="openTrip('${t.id}');return false">Add local currency & rate</a></p>`}</div>
  <div class="card"><h2>By category</h2>${Object.entries(byC).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`<div class="item"><div class="grow">${esc(c)}<div class="bar"><i style="width:${spent?a/spent*100:0}%"></i></div></div><b>${fmt(a)}</b></div>`).join('')||'<div class="empty">No expenses.</div>'}</div>
- <div class="card"><h2>Expenses</h2>${t.exp.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>`<div class="item"><span class="tag">${esc(e.cat)}</span><div class="grow">${esc(e.desc)}<div class="mute">${esc(e.date)}</div></div><b>${fmt(e.amt)}</b><button class="x" onclick="del('exp','${e.id}')">✕</button></div>`).join('')||'<div class="empty">None yet.</div>'}</div>`;
+ <div class="card"><h2>Expenses</h2>${t.exp.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>`<div class="item tap" onclick="editItem('exp','${e.id}')"><span class="tag">${esc(e.cat)}</span><div class="grow">${esc(e.desc)||'<span class="mute">—</span>'}<div class="mute">${fmtD(e.date,{day:'numeric',month:'short',year:'numeric'})}</div></div><div style="text-align:right"><b>${money(e.amt,e.cur)}</b>${e.cur!==t.ccy?`<div class="mute">≈ ${fmt(home(t,e))}</div>`:''}</div></div>`).join('')||'<div class="empty">None yet.</div>'}</div>`;
 }
-function addExp(){const a=+val('eA');if(!a)return;T().exp.push({id:uid(),date:val('eD'),cat:val('eC'),desc:val('eS'),amt:a});save()}
-function pack(t){
- return `<div class="card"><div class="row"><input id="pI" placeholder="Add item" onkeydown="if(event.key==='Enter')addPack()"><div style="flex:0"><button class="btn" onclick="addPack()">Add</button></div></div></div>
- <div class="card">${t.pack.map(p=>`<div class="item"><input type="checkbox" style="width:auto" ${p.ok?'checked':''} onchange="togPack('${p.id}')"><div class="grow ${p.ok?'done':''}">${esc(p.t)}</div><button class="x" onclick="del('pack','${p.id}')">✕</button></div>`).join('')||'<div class="empty">Empty list.</div>'}</div>`;
+function cv(w){const t=T();if(!(t.fx>0))return;if(w==='L')$('cvH').value=val('cvL')?(+val('cvL')/t.fx).toFixed(2):'';else $('cvL').value=val('cvH')?(+val('cvH')*t.fx).toFixed(2):''}
+
+/* ---------- lists: to-do & packing ---------- */
+function lists(t){
+ const left=t.todo.filter(x=>!x.ok).length,pk=t.pack.filter(p=>p.ok).length;
+ return `<div class="seg" role="tablist"><button class="${sub==='todo'?'on':''}" onclick="sub='todo';render()">To-do · ${left} left</button><button class="${sub==='pack'?'on':''}" onclick="sub='pack';render()">Packing · ${pk}/${t.pack.length}</button></div>`+(sub==='todo'?todoView(t):packView(t));
 }
-function addPack(){const v=val('pI');if(!v)return;T().pack.push({id:uid(),t:v,ok:false});save()}
-function togPack(id){const p=T().pack.find(x=>x.id===id);p.ok=!p.ok;save()}
+function chkRow(k,x,extra=''){return `<div class="item chk"><label class="grow"><input type="checkbox" ${x.ok?'checked':''} onchange="tog('${k}','${x.id}')"><span class="${x.ok?'done':''}" style="flex:1;min-width:0">${esc(x.t)}</span>${extra}</label><button class="x" onclick="editItem('${k}','${x.id}')" aria-label="Edit ${esc(x.t)}">⋯</button></div>`}
+function todoView(t){
+ const now=today(),L=t.todo.slice().sort((a,b)=>(a.ok-b.ok)||((a.due||'9')).localeCompare(b.due||'9'));
+ const due=x=>{if(!x.due||x.ok)return x.due?`<span class="due">${fmtD(x.due,{day:'numeric',month:'short'})}</span>`:'';const n=days(now,x.due);return `<span class="due ${n<0?'over':n<=3?'soon':''}">${n<0?'Overdue · ':n===0?'Today':n<=3?`In ${n}d`:''}${n===0?'':fmtD(x.due,{day:'numeric',month:'short'})}</span>`};
+ return `<div class="card full"><div class="row"><input id="tdI" placeholder="Add a task" enterkeyhint="done" style="flex:3 1 180px"><input id="tdD" type="date" style="flex:1 1 140px" aria-label="Due date"><div style="flex:0 0 auto"><button class="btn" onclick="addTodo()">Add</button></div></div>
+ <div class="btns mt"><button class="btn ghost sm" onclick="addSugTodos()">+ Suggested tasks</button><span class="mute">Visa, insurance, bank, eSIM, currency… with due dates before departure</span></div></div>
+ <div class="card full">${L.map(x=>chkRow('todo',x,due(x))).join('')||'<div class="empty">No tasks yet.</div>'}</div>`;
+}
+function addTodo(){const v=val('tdI');if(!v)return $('tdI').focus();T().todo.push({id:uid(),t:v,due:val('tdD'),ok:false});save();$('tdI')?.focus()}
+function addSugTodos(){const t=T(),n=sugTodos(t.start,t.todo);t.todo.push(...n);save();toast(n.length?`Added ${n.length} tasks`:'All suggested tasks already added')}
+function packView(t){
+ const by={};t.pack.forEach(p=>(by[p.sec]=by[p.sec]||[]).push(p));const pct=t.pack.length?t.pack.filter(p=>p.ok).length/t.pack.length*100:0;
+ return `<div class="card full"><div class="row"><input id="pI" placeholder="Add item" enterkeyhint="done" style="flex:3 1 180px"><select id="pS" style="flex:1 1 130px" aria-label="Section">${SECS.map(s=>`<option ${s===(window._lastSec||'Other')?'selected':''}>${s}</option>`).join('')}</select><div style="flex:0 0 auto"><button class="btn" onclick="addPack()">Add</button></div></div>
+ <div class="bar" style="margin-top:12px"><i style="width:${pct}%"></i></div>
+ <div class="btns mt"><button class="btn ghost sm" onclick="openTemplates()">+ From template</button><button class="btn ghost sm" onclick="untickAll()">Untick all</button></div></div>
+ ${SECS.filter(s=>by[s]).map(s=>`<div class="card"><h2>${s} <span class="mute">${by[s].filter(p=>p.ok).length}/${by[s].length}</span></h2>${by[s].map(p=>chkRow('pack',p)).join('')}</div>`).join('')||'<div class="card empty">Empty list – add items or start from a template.</div>'}`;
+}
+function addPack(){const v=val('pI');if(!v)return $('pI').focus();window._lastSec=val('pS');T().pack.push({id:uid(),t:v,sec:val('pS'),ok:false});save();$('pI')?.focus()}
+function tog(k,id){const x=T()[k].find(x=>x.id===id);x.ok=!x.ok;save()}
+function untickAll(){const t=T(),was=t.pack.filter(p=>p.ok).map(p=>p.id);if(!was.length)return;t.pack.forEach(p=>p.ok=false);save();toast('All items unticked',()=>{t.pack.forEach(p=>p.ok=was.includes(p.id));save()})}
+function openTemplates(){const t=T();dlg(`<h2>Add from template</h2><p class="mute" style="margin-top:0">Items you already have are skipped.</p>${Object.keys(TEMPLATES).map(n=>`<label class="switch"><span>${n} <span class="mute">${tplItems([n],t.pack).length} new</span></span><input type="checkbox" class="tplc" value="${n}" ${n==='Basics'?'checked':''}></label>`).join('')}
+ <div class="btns mt"><button class="btn" onclick="addTemplates()">Add items</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`)}
+function addTemplates(){const t=T(),names=[...document.querySelectorAll('.tplc:checked')].map(c=>c.value),n=tplItems(names,t.pack);t.pack.push(...n);closeDlg();save();toast(`Added ${n.length} items`)}
+
+/* ---------- bookings ---------- */
 function book(t){
- return `<div class="card"><h2>Add booking</h2><div class="row"><select id="bT">${['Flight','Hotel','Car','Train','Tour','Insurance','Visa'].map(c=>`<option>${c}</option>`).join('')}</select><input id="bR" placeholder="Ref / PNR"><input id="bD" placeholder="Details (date, time, address)"><input id="bL" placeholder="Link (optional)"></div>
- <div style="margin-top:8px"><button class="btn" onclick="addBook()">Add</button></div></div>
- <div class="card">${t.book.map(b=>`<div class="item"><span class="tag">${esc(b.type)}</span><div class="grow"><b>${esc(b.ref)}</b><div class="mute">${esc(b.detail)} ${safeUrl(b.link)?`· <a href="${esc(safeUrl(b.link))}" target="_blank" rel="noopener">open</a>`:''}</div></div><button class="x" onclick="del('book','${b.id}')">✕</button></div>`).join('')||'<div class="empty">No bookings.</div>'}</div>`;
+ return `<div class="card full"><div class="btns"><button class="btn" onclick="editItem('book')">+ Add booking or document</button></div><p class="mute" style="margin:8px 0 0">Attach photos of tickets, passport or PDFs. They're kept on this device${S.sync&&S.drive?' and saved to your Google Drive':''}.</p></div>
+ ${t.book.length?`<div class="card full">${t.book.slice().sort((a,b)=>(a.date||'9').localeCompare(b.date||'9')).map(b=>`<div class="item tap" onclick="editItem('book','${b.id}')" style="align-items:flex-start"><span class="tag" style="margin-top:2px">${esc(b.type)}</span><div class="grow"><b>${esc(b.ref)}</b><div class="mute">${b.date?fmtD(b.date)+' · ':''}${esc(b.detail)} ${safeUrl(b.link)?`· <a href="${esc(b.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">open</a>`:''}</div>${b.files.length?`<div class="mini">${b.files.map(thumb).join('')}</div>`:''}</div><span class="mute">›</span></div>`).join('')}</div>`:'<div class="card empty">No bookings yet.</div>'}`;
 }
-function addBook(){const r=val('bR');if(!r)return;T().book.push({id:uid(),type:val('bT'),ref:r,detail:val('bD'),link:val('bL')});save()}
+
+/* ---------- generic add/edit dialog ---------- */
+const FIELDS={
+ itin:[{k:'date',l:'Date',t:'date',h:1},{k:'time',l:'Time',t:'time',h:1},{k:'what',l:'What',req:1},{k:'where',l:'Where',ph:'Place or address'},{k:'note',l:'Notes',t:'area'}],
+ exp:[{k:'amt',l:'Amount',t:'num',req:1,h:1},{k:'cur',l:'Currency',t:'cur',h:1},{k:'desc',l:'Description'},{k:'cat',l:'Category',t:'sel',o:CATS,h:1},{k:'date',l:'Date',t:'date',h:1}],
+ book:[{k:'type',l:'Type',t:'sel',o:BTYPES,h:1},{k:'date',l:'Date',t:'date',h:1},{k:'ref',l:'Reference / PNR / name',req:1},{k:'detail',l:'Details',t:'area',ph:'Flight no., times, address…'},{k:'link',l:'Link',t:'url'}],
+ todo:[{k:'t',l:'Task',req:1},{k:'due',l:'Due date',t:'date'}],
+ pack:[{k:'t',l:'Item',req:1},{k:'sec',l:'Section',t:'sel',o:SECS}]};
+const TITLES={itin:'activity',exp:'expense',book:'booking',todo:'task',pack:'item'};
+function defaults(k,t){const now=today(),on=now>=t.start&&now<=t.end,cs=[t.ccy,t.lcy].filter(Boolean);
+ return {itin:{date:on?now:t.start,time:'',what:'',where:'',note:''},exp:{date:now,cat:on?'Food':'Flight',desc:'',amt:'',cur:on&&t.lcy?t.lcy:cs.includes(window._lastCur)?window._lastCur:t.ccy},book:{type:'Flight',ref:'',date:'',detail:'',link:'',files:[]},todo:{t:'',due:'',ok:false},pack:{t:'',sec:'Other',ok:false}}[k]}
+function field(f,v,t){const id='f_'+f.k,ph=f.ph?` placeholder="${esc(f.ph)}"`:'';let inp;
+ switch(f.t){
+  case 'area':inp=`<textarea id="${id}"${ph}>${esc(v)}</textarea>`;break;
+  case 'sel':inp=`<select id="${id}">${f.o.map(o=>`<option ${o===v?'selected':''}>${o}</option>`).join('')}</select>`;break;
+  case 'cur':{const cs=[t.ccy,t.lcy].filter(Boolean);if(v&&!cs.includes(v))cs.push(v);inp=`<select id="${id}">${cs.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}</select>`;break}
+  case 'num':inp=`<input id="${id}" type="number" step="any" inputmode="decimal" value="${esc(v)}"${ph}>`;break;
+  case 'url':inp=`<input id="${id}" type="url" inputmode="url" autocapitalize="off" placeholder="https://" value="${esc(v)}">`;break;
+  case 'list':inp=`<input id="${id}" list="${id}_l" value="${esc(v)}" autocomplete="off"${ph}><datalist id="${id}_l">${f.o().map(o=>`<option value="${esc(o)}">`).join('')}</datalist>`;break;
+  default:inp=`<input id="${id}" type="${f.t||'text'}" value="${esc(v)}"${ph}>`}
+ return `<label class="f${f.h?'':' w'}"><span>${f.l}</span>${inp}</label>`}
+function editItem(k,id){
+ const t=T(),it=id?t[k].find(x=>x.id===id):defaults(k,t);if(!it)return;
+ D={k,id,files:(it.files||[]).slice(),added:[],removed:[]};
+ dlg(`<h2>${id?'Edit':'New'} ${TITLES[k]}</h2><div class="form">${FIELDS[k].map(f=>field(f,it[f.k]??'',t)).join('')}</div>
+ ${k==='exp'?'<div id="cvHint" class="mute" style="margin:-4px 0 12px"></div>':''}
+ ${k==='book'?`<div class="f"><span class="mute" style="font-size:12.5px;font-weight:600">Photos & PDFs</span><div id="files" class="files" style="margin-top:6px"></div><div class="mute" style="margin-top:6px">Kept on this device${S.sync&&S.drive?' · saved to Google Drive when you tap Save':''}.</div></div>`:''}
+ <div class="btns mt"><button class="btn" onclick="saveItem()">Save</button><button class="btn ghost" onclick="closeDlg()">Cancel</button>${id?`<button class="btn ghost danger" style="margin-left:auto" onclick="delItem('${k}','${id}')">Delete</button>`:''}</div>`);
+ if(k==='book')drawFiles();
+ if(k==='exp'){const h=()=>{const a=+val('f_amt'),c=val('f_cur');$('cvHint').textContent=a&&c!==t.ccy?'≈ '+money(home(t,{amt:a,cur:c}),t.ccy):''};$('f_amt').oninput=$('f_cur').onchange=h;h()}
+}
+function saveItem(){
+ const t=T(),{k,id}=D,o={};
+ for(const f of FIELDS[k]){let v=val('f_'+f.k);if(f.req&&!v){const e=$('f_'+f.k);e.classList.add('bad');e.focus();return}if(f.t==='num')v=+v||0;o[f.k]=v}
+ if(k==='book')o.files=D.files;if(k==='exp')window._lastCur=o.cur;
+ let it;if(id)it=Object.assign(t[k].find(x=>x.id===id),o);else t[k].push(it={...defaults(k,t),...o,id:uid()});
+ D.removed.forEach(dropBlob);D=null;closeDlg();save();
+ if(k==='book'&&S.sync&&S.drive)it.files.filter(f=>!f.drive).forEach(f=>upload(f,t,it));
+}
+function delItem(k,id){const t=T(),i=t[k].findIndex(x=>x.id===id);if(i<0)return;discardDraft();const [it]=t[k].splice(i,1);closeDlg();save();
+ toast(cap(TITLES[k])+' deleted',()=>{t[k].splice(i,0,it);save()},()=>(it.files||[]).forEach(f=>dropBlob(f.id)))}
+function discardDraft(){if(D){D.added.forEach(dropBlob);D=null}}
+
+/* ---------- files: on-device storage (IndexedDB) ---------- */
+const idb=(()=>{let p;const db=()=>p||(p=new Promise((res,rej)=>{const r=indexedDB.open('voyage-files',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}));
+ const tx=(m,fn)=>db().then(d=>new Promise((res,rej)=>{const x=d.transaction('f',m),q=fn(x.objectStore('f'));x.oncomplete=()=>res(q.result);x.onerror=()=>rej(x.error)}));
+ return {get:k=>tx('readonly',s=>s.get(k)),put:(k,v)=>tx('readwrite',s=>s.put(v,k)),del:k=>tx('readwrite',s=>s.delete(k)),keys:()=>tx('readonly',s=>s.getAllKeys()),all:()=>tx('readonly',s=>s.getAll())}})();
+const URLS={};
+async function fileURL(id){if(URLS[id])return URLS[id];try{const r=await idb.get(id);return r?URLS[id]=URL.createObjectURL(r.blob):null}catch(e){return null}}
+function dropBlob(id){idb.del(id).catch(()=>{});if(URLS[id]){URL.revokeObjectURL(URLS[id]);delete URLS[id]}}
+const isImg=f=>/^image\//.test(f.type);
+function thumb(f){return `<div class="thumb" data-f="${f.id}">${isImg(f)?`<img data-fid="${f.id}" alt="">`:'<span>PDF</span>'}<button class="tb" onclick="event.stopPropagation();openFile('${f.id}')" aria-label="Open ${esc(f.name)}"></button>${f.drive?'<i class="cl" title="Saved to Google Drive">☁︎</i>':f.up==='busy'?'<i class="cl">⋯</i>':''}</div>`}
+function hydrate(root){root.querySelectorAll('img[data-fid]').forEach(async im=>{const u=await fileURL(im.dataset.fid);if(u)im.src=u;else{const f=findFile(im.dataset.fid);im.replaceWith(Object.assign(document.createElement('span'),{textContent:f?.drive?'Drive':'—'}))}})}
+function findFile(id){if(D)for(const f of D.files)if(f.id===id)return f;for(const t of S.trips)for(const b of t.book)for(const f of b.files)if(f.id===id)return f}
+function drawFiles(){const el=$('files');if(!el||!D)return;
+ el.innerHTML=D.files.map(f=>thumb(f).replace(/<\/div>$/,`<button class="rm" onclick="rmFile('${f.id}')" aria-label="Remove">✕</button></div>`)).join('')+`<label class="thumb add"><input type="file" accept="image/*,application/pdf" multiple style="display:none" onchange="addFiles(this.files);this.value=''"><span>＋<br><small>Photo / PDF</small></span></label>`;hydrate(el)}
+async function shrink(f){if(!/^image\/(jpeg|png|webp|heic|heif)$/.test(f.type))return f;
+ try{const bm=await createImageBitmap(f),k=Math.min(1,2000/Math.max(bm.width,bm.height)),c=document.createElement('canvas');c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);
+  const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(bm,0,0,c.width,c.height);const b=await new Promise(r=>c.toBlob(r,'image/jpeg',.85));return b&&b.size<f.size?b:f}catch(e){return f}}
+async function addFiles(list){
+ try{navigator.storage?.persist?.()}catch(e){}
+ for(const f of list){if(!D)return;const b=await shrink(f),id=uid(),name=(f.name||'file').replace(/\.(heic|heif|png|webp)$/i,b!==f?'.jpg':'$&');
+  try{await idb.put(id,{blob:b,name,type:b.type||f.type})}catch(e){toast('Could not store file: '+e.message);continue}
+  D.added.push(id);D.files.push({id,name,type:b.type||f.type,size:b.size})}
+ drawFiles()}
+function rmFile(id){D.files=D.files.filter(f=>f.id!==id);if(D.added.includes(id)){dropBlob(id);D.added=D.added.filter(x=>x!==id)}else D.removed.push(id);drawFiles()}
+async function openFile(id){const f=findFile(id);if(!f)return;const u=await fileURL(id);
+ $('vName').textContent=f.name;$('vLinks').innerHTML=(u?`<a class="btn ghost sm" href="${u}" download="${esc(f.name)}">Save</a>`:'')+(f.drive?`<a class="btn ghost sm" href="${esc(safeUrl(f.drive))}" target="_blank" rel="noopener">Drive</a>`:'');
+ $('vBody').innerHTML=u?(isImg(f)?`<img src="${u}" alt="${esc(f.name)}">`:`<div style="text-align:center"><p>PDF document</p><a class="btn" href="${u}" target="_blank" rel="noopener">Open PDF</a></div>`):`<div class="empty">Not stored on this device.${f.drive?' Open it from Google Drive.':''}</div>`;
+ $('viewer').classList.add('on')}
+function closeViewer(){$('viewer').classList.remove('on')}
+
+/* ---------- Google Drive upload (through Apps Script) ---------- */
+function b64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=()=>rej(r.error);r.readAsDataURL(blob)})}
+async function upload(f,t,b){if(!S.sync||f.drive||f.up==='busy')return;f.up='busy';render();
+ try{const r=await idb.get(f.id);if(!r)throw Error('not on this device');
+  const d=await post({app:'voyage',action:'upload',folder:t.name,name:`${b.type} ${b.ref} – ${f.name}`.replace(/[\\/]/g,'-'),mime:f.type,data:await b64(r.blob)});
+  if(!d.ok)throw Error(d.error||'upload failed');f.drive=d.url;f.did=d.id;delete f.up;save()}
+ catch(e){f.up='err';persist();render();toast('Drive upload failed: '+e.message)}}
+function pending(){const out=[];S.trips.forEach(t=>t.book.forEach(b=>b.files.forEach(f=>{if(!f.drive)out.push([f,t,b])})));return out}
+function uploadPending(){const p=pending();if(!S.sync)return msg('Save your Apps Script URL first.');p.filter(([f])=>f.up!=='busy').forEach(([f,t,b])=>{delete f.up;upload(f,t,b)});toast(`Uploading ${p.length} file${p.length===1?'':'s'}…`)}
+
+/* ---------- share / PDF ---------- */
+function shareText(t){
+ const by={};t.itin.slice().sort((a,b)=>(a.date+(a.time||'99')).localeCompare(b.date+(b.time||'99'))).forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
+ let s=`✈️ ${t.name}\n📍 ${t.dest} · ${fmtD(t.start,{day:'numeric',month:'short'})} – ${fmtD(t.end,{day:'numeric',month:'short',year:'numeric'})}\n`;
+ Object.entries(by).forEach(([d,l])=>{s+=`\n*Day ${days(t.start,d)+1} · ${fmtD(d)}*\n`+l.map(i=>`${i.time||'•'} ${i.what}${i.where?' – '+i.where:''}`).join('\n')+'\n'});
+ if(t.book.length)s+='\n*Bookings*\n'+t.book.map(b=>`${b.type}: ${b.ref}${b.detail?' – '+b.detail:''}`).join('\n')+'\n';
+ const e=t.ess||{};if(e.hotel||e.addr)s+=`\n🏨 ${[e.hotel,e.addr,e.phone].filter(Boolean).join(', ')}\n`;
+ return s.trim()}
+function openShare(){const t=T(),txt=shareText(t);window._share=txt;
+ dlg(`<h2>Share itinerary</h2><pre class="share">${esc(txt)}</pre><div class="btns">
+ <a class="btn" style="text-decoration:none;background:#25d366;color:#000" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">WhatsApp</a>
+ ${navigator.share?'<button class="btn ghost" onclick="navigator.share({title:T().name,text:_share}).catch(()=>{})">Share…</button>':''}
+ <button class="btn ghost" onclick="navigator.clipboard.writeText(_share).then(()=>toast(\'Copied\'),()=>{})">Copy</button>
+ <button class="btn ghost" onclick="printTrip()">Save as PDF</button><button class="btn ghost" onclick="closeDlg()" style="margin-left:auto">Close</button></div>
+ <p class="mute" style="margin-bottom:0">Save as PDF opens the print screen – choose “Save as PDF” (on iPhone: Print → Share → Save to Files).</p>`)}
+function buildPrint(){const t=T();if(!t)return;const e=t.ess||{};
+ const by={};t.itin.slice().sort((a,b)=>(a.date+(a.time||'99')).localeCompare(b.date+(b.time||'99'))).forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
+ $('printView').innerHTML=`<h1>${esc(t.name)}</h1><div class="p">${esc(t.dest)} · ${fmtD(t.start,{day:'numeric',month:'long'})} – ${fmtD(t.end,{day:'numeric',month:'long',year:'numeric'})} · ${tripLen(t)} days</div>
+ <h2>Itinerary</h2>${Object.entries(by).map(([d,l])=>`<section><h3>Day ${days(t.start,d)+1} · ${fmtD(d,{weekday:'long',day:'numeric',month:'long'})}</h3><table>${l.map(i=>`<tr><td>${esc(i.time)||'—'}</td><td><b>${esc(i.what)}</b>${i.where?` · ${esc(i.where)}`:''}${i.note?`<div class="p">${esc(i.note)}</div>`:''}</td></tr>`).join('')}</table></section>`).join('')||'<p class="p">No activities.</p>'}
+ ${t.book.length?`<h2>Bookings</h2><table>${t.book.map(b=>`<tr><td>${esc(b.type)}</td><td><b>${esc(b.ref)}</b>${b.date?' · '+fmtD(b.date):''}${b.detail?`<div class="p">${esc(b.detail)}</div>`:''}</td></tr>`).join('')}</table>`:''}
+ ${Object.values(e).some(Boolean)?`<h2>Essentials</h2><table>${[['Hotel',[e.hotel,e.addr,e.addrLocal,e.phone].filter(Boolean).join('<br>')],['Emergency',esc(e.emerg)],['Embassy',esc(e.embassy)],['Time zone',esc(e.tz)],['Plug',esc(e.plug)],['Language',esc(e.lang)]].filter(r=>r[1]).map(r=>`<tr><td>${r[0]}</td><td>${r[0]==='Hotel'?r[1].split('<br>').map(esc).join('<br>'):r[1]}</td></tr>`).join('')}</table>`:''}`}
+function printTrip(){closeDlg();buildPrint();setTimeout(()=>print(),350)}
+addEventListener('beforeprint',buildPrint);
+
+/* ---------- trip dialog ---------- */
+function openTrip(id){
+ const t=S.trips.find(x=>x.id===id)||{name:'',dest:'',start:'',end:'',budget:'',ccy:'MYR',lcy:'',fx:''};
+ const cl=`<datalist id="ccyL">${CCYS.map(c=>`<option value="${c}">`).join('')}</datalist>`;
+ dlg(`<h2>${id?'Edit':'New'} trip</h2><div class="form">
+ <label class="f w"><span>Trip name</span><input id="tN" value="${esc(t.name)}" placeholder="e.g. Tokyo 2027"></label>
+ <label class="f w"><span>Destination</span><input id="tDst" value="${esc(t.dest)}" placeholder="City, Country"></label>
+ <label class="f"><span>Start</span><input type="date" id="tS" value="${t.start}"></label><label class="f"><span>End</span><input type="date" id="tE" value="${t.end}"></label>
+ <label class="f"><span>Budget</span><input type="number" id="tB" inputmode="decimal" step="any" value="${t.budget}"></label><label class="f"><span>Home currency</span><input id="tC" list="ccyL" value="${esc(t.ccy)}" oninput="this.value=this.value.toUpperCase();fxLbl()" autocapitalize="characters"></label>
+ <label class="f"><span>Local currency</span><input id="tL" list="ccyL" value="${esc(t.lcy)}" placeholder="e.g. JPY" oninput="this.value=this.value.toUpperCase();fxLbl()" autocapitalize="characters"></label>
+ <label class="f"><span id="fxL">Rate</span><input id="tR" type="number" inputmode="decimal" step="any" value="${t.fx||''}"></label>
+ <div class="f w" style="margin-top:-6px"><button class="btn ghost sm" type="button" onclick="fetchRate()">Get today's rate</button> <span id="fxMsg" class="mute"></span></div>
+ ${id?'':`<label class="switch f w"><span>Start with suggested to-dos & basic packing list</span><input type="checkbox" id="tSug" checked></label>`}
+ </div>${cl}<div class="btns"><button class="btn" onclick="saveTrip('${id||''}')">Save</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`);fxLbl()}
+function fxLbl(){const h=val('tC')||'MYR',l=val('tL');$('fxL').textContent=l?`1 ${h} = ? ${l}`:'Rate (set local currency)'}
+async function fetchRate(){const h=val('tC'),l=val('tL');if(!h||!l)return $('fxMsg').textContent='Enter both currencies first.';$('fxMsg').textContent='Fetching…';
+ try{const j=await (await fetch('https://open.er-api.com/v6/latest/'+encodeURIComponent(h))).json();const r=j.rates&&j.rates[l];if(!r)throw Error('unknown currency');$('tR').value=+r.toFixed(4);$('fxMsg').textContent='Updated ✓'}catch(e){$('fxMsg').textContent='Could not fetch ('+e.message+') – type it in.'}}
+function saveTrip(id){
+ const start=val('tS')||today(),d={name:val('tN')||'Untitled',dest:val('tDst'),start,end:val('tE')>=start?val('tE'):start,budget:+val('tB')||0,ccy:val('tC')||'MYR',lcy:val('tL'),fx:+val('tR')||0};
+ if(d.lcy===d.ccy){d.lcy='';d.fx=0}
+ if(id)Object.assign(S.trips.find(x=>x.id===id),d);
+ else{const sug=$('tSug')?.checked,n={id:uid(),...d,notes:'',ess:{},itin:[],exp:[],book:[],pack:sug?tplItems(['Basics']):[],todo:sug?sugTodos(start):[]};S.trips.push(n);S.cur=n.id}
+ closeDlg();save()}
+function delTrip(){const t=T();confirmBox(`Delete “${esc(t.name)}” and everything in it?`,()=>{t.book.forEach(b=>b.files.forEach(f=>dropBlob(f.id)));S.trips=S.trips.filter(x=>x.id!==t.id);S.cur=S.trips[0]?.id;save()})}
+
+/* ---------- settings ---------- */
 function settings(){
- return `<div class="card"><h2>Google Sheets sync (Apps Script)</h2><p class="mute">Paste your Apps Script web-app URL. Works once hosted on GitHub Pages.</p>
- <input id="sU" value="${esc(S.sync)}" placeholder="https://script.google.com/macros/s/.../exec"><div class="row" style="margin-top:8px"><button class="btn" onclick="S.sync=val('sU');save()">Save URL</button><button class="btn ghost" onclick="push()">Push ↑</button><button class="btn ghost" onclick="pull()">Pull ↓</button></div><div class="mute" id="sMsg"></div></div>
- <div class="card"><h2>Backup</h2><p class="mute">Copy this JSON to back up, or paste a backup and import.</p><textarea id="bk" style="min-height:120px">${esc(JSON.stringify(S))}</textarea>
- <div class="row" style="margin-top:8px"><button class="btn ghost" onclick="copyBk()">Copy</button><button class="btn ghost" onclick="impBk()">Import</button></div></div>
+ const p=pending().length,nf=S.trips.reduce((a,t)=>a+t.book.reduce((b,x)=>b+x.files.length,0),0);
+ return `<div class="card"><h2>Google Sheets & Drive sync</h2>
+ <p class="mute" style="margin-top:0">Paste your Apps Script web-app URL (see README). Your trips go to a Google Sheet and ticket photos to a “Voyage” folder in your Google Drive.</p>
+ <input id="sU" type="url" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(S.sync)}" placeholder="https://script.google.com/macros/s/.../exec">
+ <div class="btns mt"><button class="btn" onclick="saveUrl()">Save URL</button></div>
+ <label class="switch mt"><span>Auto-sync<div class="mute">Saves changes automatically and pulls newer data when you open the app</div></span><input type="checkbox" ${S.auto?'checked':''} onchange="S.auto=this.checked;persist();if(S.auto)autoPull();render()"></label>
+ <label class="switch"><span>Save attachments to Google Drive<div class="mute">Photos/PDFs are uploaded when you save a booking</div></span><input type="checkbox" ${S.drive?'checked':''} onchange="S.drive=this.checked;persist();render()"></label>
+ <div class="btns mt"><button class="btn ghost" onclick="push()">Push now ↑</button><button class="btn ghost" onclick="pull()">Pull ↓</button>${p&&S.sync?`<button class="btn ghost" onclick="uploadPending()">Upload ${p} file${p>1?'s':''} to Drive</button>`:''}</div><div class="mute mt" id="sMsg">${syncLabel()}</div></div>
+ <div class="card"><h2>Attachments on this device</h2><p class="mute" style="margin:0">${nf} file${nf===1?'':'s'}${p?` · ${p} not yet in Drive`:''} · <span id="stor">checking storage…</span></p></div>
+ <div class="card"><h2>Backup</h2><p class="mute" style="margin-top:0">Download all trips as a file, or restore one. Photos aren't included – they live on this device and in Drive.</p>
+ <div class="btns"><button class="btn ghost" onclick="dlBackup()">Download backup</button><label class="btn ghost">Restore from file<input type="file" accept="application/json,.json" style="display:none" onchange="restore(this.files[0]);this.value=''"></label></div></div>
+ <div class="card pc-only"><h2>Keyboard shortcuts</h2><div class="mute"><span class="kbd">1</span>–<span class="kbd">6</span> switch tabs · <span class="kbd">N</span> new trip · <span class="kbd">Enter</span> add / save · <span class="kbd">Esc</span> close</div></div>
  ${T()?`<div class="card"><button class="btn" style="background:var(--warn);color:#000" onclick="delTrip()">Delete current trip</button></div>`:''}`;
 }
-async function push(){if(!S.sync)return msg('Save your Apps Script URL first.');msg('Pushing…');try{const r=await fetch(S.sync,{method:'POST',body:JSON.stringify({app:'voyage',data:S})});const d=await r.json().catch(()=>({}));msg(d.ok?'Pushed ✓ '+new Date().toLocaleTimeString():'Push failed: '+(d.error||r.status))}catch(e){msg('Push failed: '+e.message)}}
+function saveUrl(){const u=val('sU');if(u&&!/^https:\/\/script\.google(usercontent)?\.com\//.test(u))return msg('That doesn\'t look like an Apps Script URL.');S.sync=u;persist();render();msg(u?'Saved ✓':'Sync turned off');if(u&&S.auto)autoPull()}
+function dlBackup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));a.download=`voyage-backup-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1e4)}
+async function restore(f){if(!f)return;try{const d=migrate(JSON.parse(await f.text()));if(!d)throw 0;confirmBox(`Replace all data on this device with this backup (${d.trips.length} trips)?`,()=>{const k={sync:S.sync,auto:S.auto,drive:S.drive};S=Object.assign(d,k);save();toast('Restored ✓')})}catch(e){toast('Not a valid Voyage backup')}}
+function msg(m){const e=$('sMsg');if(e)e.textContent=m}
+setInterval(()=>{const e=$('lt'),t=T();if(e&&t?.ess?.tz)e.textContent=tzNow(t.ess.tz)},30000);
+async function storageInfo(){const e=$('stor');if(!e)return;try{const s=await navigator.storage.estimate(),pz=await navigator.storage.persisted?.();e.textContent=`${(s.usage/1048576).toFixed(1)} MB used${pz?' · protected from clean-up':''}`}catch(x){e.textContent=''}}
+
+/* ---------- sync engine ---------- */
+let sync={st:'idle',at:0,err:''},syncT;
+function syncLabel(){if(!S.sync)return 'Not connected – data stays on this device.';const at=sync.at?new Date(sync.at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'';
+ return {busy:'Syncing…',pending:'Waiting to sync…',ok:'Synced '+at,err:'Sync error: '+sync.err,offline:'Offline – will sync when back online',idle:S.auto?'Auto-sync on':'Connected · auto-sync off'}[sync.st]}
+function drawPill(){const p=$('pill'),st=!S.sync?'off':sync.st==='idle'?(S.auto?'ok':'off'):sync.st;p.className='pill '+st;
+ p.querySelector('span').textContent=!S.sync?'Local only':{busy:'Syncing',pending:'Saving',ok:sync.at?'Synced '+new Date(sync.at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Sync on',err:'Sync error',offline:'Offline',off:'Sync off'}[st];
+ p.title=syncLabel();if(tab==='settings'){msg(syncLabel());storageInfo()}}
+function setSync(st,err=''){sync.st=st;sync.err=err;if(st==='ok')sync.at=Date.now();drawPill()}
+function post(body){return fetch(S.sync,{method:'POST',body:JSON.stringify(body)}).then(r=>r.json())}
+function queueSync(){if(S.auto&&S.sync){clearTimeout(syncT);setSync('pending');syncT=setTimeout(()=>push(true),1500)}}
+async function push(silent){if(!S.sync)return msg('Save your Apps Script URL first.');clearTimeout(syncT);setSync('busy');
+ try{const d=await post({app:'voyage',data:S});if(!d.ok)throw Error(d.error||'failed');setSync('ok');if(!silent)toast('Pushed ✓')}
+ catch(e){setSync(navigator.onLine?'err':'offline',e.message)}}
+function adopt(d){const k={sync:S.sync,auto:S.auto,drive:S.drive,cur:S.cur};S=migrate(d);Object.assign(S,{sync:k.sync,auto:k.auto,drive:k.drive});if(S.trips.some(t=>t.id===k.cur))S.cur=k.cur;persist();render()}
+async function fetchRemote(){const r=await fetch(S.sync+(S.sync.includes('?')?'&':'?')+'app=voyage');return r.json()}
+async function autoPull(){if(!S.auto||!S.sync||dlgOpen()||sync.st==='busy')return;setSync('busy');
+ try{const d=await fetchRemote();if(d&&d.trips&&(+d.updated||0)>S.updated){adopt(d);setSync('ok')}else if(S.updated>(+d?.updated||0))await push(true);else setSync('ok')}
+ catch(e){setSync(navigator.onLine?'err':'offline',e.message)}}
 function pull(){if(!S.sync)return msg('Save your Apps Script URL first.');confirmBox('Replace data on this device with the copy in Google Sheets?',doPull)}
-async function doPull(){tab='settings';render();msg('Pulling…');try{const url=S.sync;const r=await fetch(url+'?app=voyage');const d=await r.json();if(d&&d.trips){S=d;S.sync=S.sync||url;save();msg('Pulled ✓')}else msg('No data in sheet yet — push first.')}catch(e){msg('Pull failed: '+e.message)}}
-function msg(m){const e=document.getElementById('sMsg');if(e)e.textContent=m}
-function copyBk(){navigator.clipboard.writeText(val('bk')).catch(()=>{})}
-function impBk(){try{const d=JSON.parse(val('bk'));if(d.trips){S=d;save();alert('Imported ✓')}else alert('Not a Voyage backup')}catch(e){alert('Invalid JSON')}}
-function delTrip(){confirmBox('Delete this trip?',()=>{S.trips=S.trips.filter(t=>t.id!==S.cur);S.cur=S.trips[0]?.id;save()})}
-function openTrip(id){
- const t=S.trips.find(x=>x.id===id)||{name:'',dest:'',start:'',end:'',budget:'',ccy:'MYR'};
- dlg(`<h2>${id?'Edit':'New'} trip</h2><div class="row"><input id="tN" placeholder="Trip name" value="${esc(t.name)}"><input id="tDst" placeholder="Destination" value="${esc(t.dest)}"></div>
- <div class="row" style="margin-top:8px"><input type="date" id="tS" value="${t.start}"><input type="date" id="tE" value="${t.end}"></div>
- <div class="row" style="margin-top:8px"><input type="number" id="tB" placeholder="Budget" value="${t.budget}"><input id="tC" placeholder="Currency" value="${esc(t.ccy)}"></div>
- <div class="row" style="margin-top:12px"><button class="btn" onclick="saveTrip('${id||''}')">Save</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`);
-}
-function saveTrip(id){
- const d={name:val('tN')||'Untitled',dest:val('tDst'),start:val('tS')||today(),end:val('tE')||val('tS'),budget:+val('tB')||0,ccy:val('tC')||'MYR'};
- if(id)Object.assign(S.trips.find(x=>x.id===id),d);else{const n={id:uid(),...d,notes:'',itin:[],exp:[],pack:[],book:[]};S.trips.push(n);S.cur=n.id}
- closeDlg();save();
-}
-function del(k,id){T()[k]=T()[k].filter(x=>x.id!==id);save()}
-function val(id){return document.getElementById(id)?.value.trim()||''}
-function dlg(h){document.getElementById('dlgBody').innerHTML=h;document.getElementById('dlg').classList.add('on')}
-function closeDlg(){document.getElementById('dlg').classList.remove('on')}
-function confirmBox(m,fn){window._cf=fn;dlg(`<p>${m}</p><div class="row"><button class="btn" style="background:var(--warn);color:#000" onclick="closeDlg();_cf()">Yes</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`)}
+async function doPull(){setSync('busy');try{const d=await fetchRemote();if(d&&d.trips){adopt(d);setSync('ok');toast('Pulled ✓')}else{setSync('idle');toast('No data in the sheet yet – push first')}}catch(e){setSync(navigator.onLine?'err':'offline',e.message)}}
+addEventListener('online',()=>{if(S.auto&&S.sync)(['offline','err','pending'].includes(sync.st)?push(true):autoPull())});
+addEventListener('offline',()=>{if(S.sync)setSync('offline')});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')autoPull();else if(sync.st==='pending')push(true)});
+
+/* ---------- dialogs, toast ---------- */
+function dlg(h){const d=$('dlg'),was=d.classList.contains('on');$('dlgBody').innerHTML=h;d.classList.add('on');document.body.classList.add('lock');$('dlgBody').scrollTop=0;
+ if(!was)try{history.pushState({dlg:1},'')}catch(e){}
+ if(matchMedia('(pointer:fine)').matches)setTimeout(()=>d.querySelector('input:not([type=checkbox]):not([type=file]),select,textarea')?.focus(),50)}
+function hideDlg(){$('dlg').classList.remove('on');document.body.classList.remove('lock');discardDraft()}
+function closeDlg(){if(!dlgOpen())return;hideDlg();if(history.state&&history.state.dlg)history.back()}
+function confirmBox(m,fn){window._cf=fn;dlg(`<p style="margin-top:0">${m}</p><div class="btns"><button class="btn" style="background:var(--warn);color:#000" onclick="closeDlg();_cf()">Yes</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`)}
+let tT,tFin;
+function toast(m,undo,fin){clearTimeout(tT);if(tFin){const f=tFin;tFin=null;f()}$('toastMsg').textContent=m;const b=$('toastBtn');b.style.display=undo?'':'none';
+ b.onclick=()=>{clearTimeout(tT);tFin=null;$('toast').classList.remove('on');undo()};tFin=fin||null;$('toast').classList.add('on');
+ tT=setTimeout(()=>{$('toast').classList.remove('on');if(tFin){const f=tFin;tFin=null;f()}},undo?6000:2500)}
+
+/* ---------- start-up ---------- */
 const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))tab=h;
-render();
+addEventListener('popstate',()=>{if($('viewer').classList.contains('on'))return closeViewer();if(dlgOpen())return hideDlg();
+ const k=location.hash.slice(1);tab=TABS.some(t=>t[0]===k)?k:'overview';render()});
+addEventListener('keydown',e=>{const tg=e.target,typing=/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName);
+ if(e.key==='Escape'){if($('viewer').classList.contains('on'))return closeViewer();if($('driver').classList.contains('on'))return closeDriver();return closeDlg()}
+ if(e.key==='Enter'&&tg.tagName==='INPUT'&&!/checkbox|file/.test(tg.type)){const b=tg.closest('.card')?.querySelector('.btn:not(.ghost)');if(b){e.preventDefault();b.click()}return}
+ if(typing||e.metaKey||e.ctrlKey||e.altKey||dlgOpen())return;
+ if(/^[1-6]$/.test(e.key))go(TABS[e.key-1][0]);else if(e.key.toLowerCase()==='n')openTrip()});
+addEventListener('storage',e=>{if(e.key===KEY&&!dlgOpen()){S=load();render()}});
+if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+render();autoPull();
 </script>
 </body>
 </html>

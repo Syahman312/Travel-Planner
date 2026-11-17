@@ -2,18 +2,26 @@
  * Voyage – Travel Planner sync backend (Google Apps Script)
  *
  * Setup:
- *  1. Create a Google Sheet → Extensions → Apps Script → paste this file.
+ *  1. Create a Google Sheet → Extensions → Apps Script → paste this file → Save.
  *  2. Deploy → New deployment → Web app
  *       Execute as: Me    ·    Who has access: Anyone
- *  3. Copy the /exec URL into Voyage → Settings → "Google Sheets sync".
+ *     Approve the permissions (Sheets + Drive).
+ *  3. Copy the /exec URL into Voyage → Settings → "Google Sheets & Drive sync".
  *
- * The full app state is stored as JSON (chunked) in a hidden "_voyage" sheet.
- * Readable "Trips", "Itinerary", "Expenses", "Packing" and "Bookings" tabs are
- * rebuilt on every push so you can browse your data in Sheets.
+ *  Updating this file later: Deploy → Manage deployments → ✏️ Edit →
+ *  Version: "New version" → Deploy. The URL stays the same.
+ *
+ * Data:
+ *  - Full app state is stored as JSON (chunked) in a hidden "_voyage" sheet.
+ *  - Readable tabs (Trips, Itinerary, Expenses, To-do, Packing, Bookings,
+ *    Essentials) are rebuilt on every push.
+ *  - Booking photos/PDFs are saved to Google Drive → "Voyage" → <trip name>.
+ *    Files stay private to your Google account.
  */
 
 const DATA_SHEET = '_voyage';
-const CHUNK = 45000; // a cell holds max 50,000 chars
+const CHUNK = 45000;          // a cell holds max 50,000 chars
+const DRIVE_ROOT = 'Voyage';
 
 function doGet(e) {
   const raw = readData_();
@@ -23,6 +31,7 @@ function doGet(e) {
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
+    if (body && body.action === 'upload') return json_(upload_(body));
     if (!body || !body.data || !Array.isArray(body.data.trips)) {
       return json_({ ok: false, error: 'Invalid payload' });
     }
@@ -36,9 +45,31 @@ function doPost(e) {
     }
     return json_({ ok: true, savedAt: new Date().toISOString() });
   } catch (err) {
-    return json_({ ok: false, error: String(err) });
+    return json_({ ok: false, error: String(err && err.message || err) });
   }
 }
+
+/* ---------- Drive attachments ---------- */
+
+function upload_(b) {
+  if (!b.data || !b.name) return { ok: false, error: 'Missing file' };
+  const root = folder_(DriveApp.getRootFolder(), DRIVE_ROOT);
+  const dir = folder_(root, clean_(b.folder || 'Unsorted'));
+  const blob = Utilities.newBlob(Utilities.base64Decode(b.data), b.mime || 'application/octet-stream', clean_(b.name));
+  const file = dir.createFile(blob);
+  return { ok: true, id: file.getId(), url: file.getUrl() };
+}
+
+function folder_(parent, name) {
+  const it = parent.getFoldersByName(name);
+  return it.hasNext() ? it.next() : parent.createFolder(name);
+}
+
+function clean_(s) {
+  return String(s).replace(/[\\/:*?"<>|]/g, '-').slice(0, 120) || 'file';
+}
+
+/* ---------- Sheet storage ---------- */
 
 function readData_() {
   const sh = SpreadsheetApp.getActive().getSheetByName(DATA_SHEET);
@@ -61,16 +92,23 @@ function writeData_(str) {
 function writeTables_(S) {
   const trips = S.trips || [];
   const each = (key, fn) => trips.flatMap(t => (t[key] || []).map(x => fn(t, x)));
-  table_('Trips', ['Trip', 'Destination', 'Start', 'End', 'Budget', 'Currency', 'Notes'],
-    trips.map(t => [t.name, t.dest, t.start, t.end, t.budget, t.ccy, t.notes || '']));
-  table_('Itinerary', ['Trip', 'Date', 'Time', 'What', 'Where'],
-    each('itin', (t, i) => [t.name, i.date, i.time, i.what, i.where]));
-  table_('Expenses', ['Trip', 'Date', 'Category', 'Description', 'Amount', 'Currency'],
-    each('exp', (t, e) => [t.name, e.date, e.cat, e.desc, Number(e.amt) || 0, t.ccy]));
-  table_('Packing', ['Trip', 'Item', 'Packed'],
-    each('pack', (t, p) => [t.name, p.t, !!p.ok]));
-  table_('Bookings', ['Trip', 'Type', 'Ref', 'Details', 'Link'],
-    each('book', (t, b) => [t.name, b.type, b.ref, b.detail, b.link]));
+  const toHome = (t, e) => (e.cur && e.cur !== t.ccy && e.cur === t.lcy && t.fx > 0) ? e.amt / t.fx : Number(e.amt) || 0;
+
+  table_('Trips', ['Trip', 'Destination', 'Start', 'End', 'Budget', 'Home currency', 'Local currency', 'Rate (1 home = x local)', 'Notes'],
+    trips.map(t => [t.name, t.dest, t.start, t.end, t.budget, t.ccy, t.lcy || '', t.fx || '', t.notes || '']));
+  table_('Itinerary', ['Trip', 'Date', 'Time', 'What', 'Where', 'Notes'],
+    each('itin', (t, i) => [t.name, i.date, i.time, i.what, i.where, i.note || '']));
+  table_('Expenses', ['Trip', 'Date', 'Category', 'Description', 'Amount', 'Currency', 'Amount (home)', 'Home currency'],
+    each('exp', (t, e) => [t.name, e.date, e.cat, e.desc, Number(e.amt) || 0, e.cur || t.ccy, Math.round(toHome(t, e) * 100) / 100, t.ccy]));
+  table_('To-do', ['Trip', 'Task', 'Due', 'Done'],
+    each('todo', (t, x) => [t.name, x.t, x.due || '', !!x.ok]));
+  table_('Packing', ['Trip', 'Section', 'Item', 'Packed'],
+    each('pack', (t, p) => [t.name, p.sec || '', p.t, !!p.ok]));
+  table_('Bookings', ['Trip', 'Type', 'Date', 'Ref', 'Details', 'Link', 'Files in Drive'],
+    each('book', (t, b) => [t.name, b.type, b.date || '', b.ref, b.detail, b.link,
+      (b.files || []).map(f => f.drive ? f.name + ': ' + f.drive : f.name + ' (device only)').join('\n')]));
+  table_('Essentials', ['Trip', 'Hotel', 'Address', 'Local address', 'Phone', 'Emergency', 'Embassy', 'Time zone', 'Plug', 'Language'],
+    trips.map(t => { const e = t.ess || {}; return [t.name, e.hotel, e.addr, e.addrLocal, e.phone, e.emerg, e.embassy, e.tz, e.plug, e.lang]; }));
 }
 
 function table_(name, head, rows) {
