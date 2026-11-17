@@ -14,6 +14,7 @@ A single-file travel planner web app. No build step, no dependencies. Data is sa
 - **Auto-sync** to Google Sheets, with a status dot in the header
 - **Backup**: download and restore a file
 - **Works on every device**
+  - **Swipe left/right** between tabs: the next tab follows your finger and snaps into place. Tapping a tab slides it in from the matching side
   - iPhone and Android: bottom tab bar, notch and home-bar safe areas, no zoom-on-tap, the right number keypad, Android back button closes pop-ups
   - iPad, tablets and PC: sidebar navigation, two-column layout on wide screens, hover states
   - Keyboard: `1`–`6` switch tabs, `N` new trip, `Enter` adds, `Esc` closes
