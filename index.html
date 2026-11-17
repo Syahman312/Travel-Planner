@@ -6,28 +6,41 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Voyage">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Voyage – Travel Planner</title>
 <style>
 :root{color-scheme:dark;--bg:#000;--card:#0b0b0b;--c2:#16171a;--ink:#f0f0f0;--mute:#7d7d7d;--line:#1c1c1c;--line2:#24252a;--acc:#e8e8e8;--cy:#22e3ff;--warn:#f87171;--amb:#fbbf24;--ok:#4ade80}
 *{box-sizing:border-box}
-body{margin:0;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(80px + env(safe-area-inset-bottom))}
-header{position:sticky;top:0;z-index:5;background:#000;border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;gap:10px;align-items:center}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(84px + env(safe-area-inset-bottom));-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+body.lock{overflow:hidden}
+header{position:sticky;top:0;z-index:5;background:#000;border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 12px calc(16px + env(safe-area-inset-left));display:flex;gap:10px;align-items:center}
 header h1{font:600 18px system-ui,sans-serif;margin:0;flex:1;white-space:nowrap}header h1 span{color:var(--ink)}
 button,input,textarea,select{font:inherit;color:inherit}
-select,input,textarea{color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
-input[type=checkbox]{accent-color:var(--cy);width:20px!important;height:20px;padding:0}
+select,input,textarea{color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%;min-height:44px;font-size:16px;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:28px}
+input[type=date],input[type=time]{min-width:0}
+input[type=checkbox]{-webkit-appearance:auto;appearance:auto;accent-color:var(--cy);width:22px!important;height:22px;min-height:0;padding:0;flex:none}
 button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 textarea{min-height:60px}
-nav{position:fixed;bottom:0;left:0;right:0;z-index:4;display:flex;overflow-x:auto;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1 1 0;min-width:0;border:0;background:none;color:var(--mute);padding:15px 2px;font-size:12.5px;white-space:nowrap;cursor:pointer;border-radius:0}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:4;display:flex;background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+nav button{flex:1 1 0;min-width:0;border:0;background:none;color:var(--mute);padding:8px 2px 9px;font-size:11px;white-space:nowrap;cursor:pointer;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:52px}
+nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{color:var(--acc);box-shadow:inset 0 3px var(--acc);font-weight:600}
-main{max-width:720px;margin:0 auto;padding:14px}
+main{max-width:720px;margin:0 auto;padding:14px calc(14px + env(safe-area-inset-right)) 14px calc(14px + env(safe-area-inset-left))}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
 .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 140px}
 .btn{border:0;background:var(--acc);color:var(--bg);border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
 .btn:active{transform:scale(.97)}
 .btn.ghost{background:transparent;color:var(--acc);border:1px solid var(--line2)}.btn.sm{padding:6px 12px;font-size:13.5px}
-.x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px}
+.x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px;min-width:44px;min-height:44px;margin:-8px -10px -8px 0;border-radius:10px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
 .stat{background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:10px 12px}.stat b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.stat small{color:var(--mute)}
 .item{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line2)}.item:first-child{border-top:0}
@@ -42,11 +55,37 @@ h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-
 @media(max-width:759px){.dialog{align-items:flex-end;padding:0}.dialog .card{max-width:100%;border-radius:22px 22px 0 0;margin:0;padding:8px 16px calc(18px + env(safe-area-inset-bottom));animation:sheet .28s cubic-bezier(.2,.8,.2,1)}
 .dialog .card::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:var(--line2);margin:0 auto 12px}}
 @keyframes sheet{from{transform:translateY(100%)}}
+.dialog .card{overscroll-behavior:contain;max-height:92dvh}
+/* small phones (iPhone SE / mini) */
+@media(max-width:359px){header h1 span{display:none}main{padding-left:10px;padding-right:10px}.stat b{font-size:17px}}
+/* phones in landscape: slimmer bars */
+@media(orientation:landscape) and (max-height:500px){nav button{min-height:40px;flex-direction:row;justify-content:center;gap:6px;font-size:12px;padding:6px 2px}nav svg{width:18px;height:18px}header{position:static}}
+/* tablets & PCs: side navigation */
+@media(min-width:744px){
+ body{padding-bottom:24px;padding-left:200px}
+ nav{top:0;right:auto;width:200px;flex-direction:column;gap:2px;border-top:0;border-right:1px solid var(--line);padding:calc(76px + env(safe-area-inset-top)) 12px 16px calc(12px + env(safe-area-inset-left));background:var(--card)}
+ nav button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;font-size:15px;padding:11px 14px;border-radius:10px;min-height:44px}
+ nav button.on{box-shadow:none;background:var(--c2)}
+ nav svg{width:20px;height:20px}
+ main{max-width:1100px;padding:20px 28px}
+ #tripSel{max-width:280px!important}
+}
+/* large screens: two-column card layout */
+@media(min-width:1100px){
+ body{padding-left:220px}nav{width:220px}
+ main{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
+ main>.full,main>.stats,main>.empty{grid-column:1/-1}
+ main>.stats{margin-bottom:8px}main>.card[style*="margin-top"]{margin-top:0!important}
+}
+/* mouse & trackpad */
+@media(hover:hover){.btn:hover{filter:brightness(1.12)}.btn.ghost:hover{background:var(--c2)}nav button:hover{color:var(--ink)}nav button.on:hover{color:var(--acc)}.x:hover{color:var(--warn);background:var(--c2)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{body{background:#fff;color:#000;padding:0}header,nav,.no-print,.x,.btn{display:none!important}.card,.stat{border-color:#ccc;background:#fff;break-inside:avoid}.mute,.stat small{color:#555}.tag{color:#000}main{display:block;max-width:none}}
 </style>
 </head>
 <body>
 <header><h1>✈️ <span>Voyage</span></h1><select id="tripSel" style="max-width:200px;min-width:0"></select><button class="btn sm" style="white-space:nowrap;flex:none" onclick="openTrip()">+ Trip</button></header>
-<nav id="nav"></nav>
+<nav id="nav" aria-label="Sections"></nav>
 <main id="view"></main>
 
 <div class="dialog" id="dlg" onclick="if(event.target===this)closeDlg()"><div class="card" id="dlgBody"></div></div>
@@ -54,6 +93,7 @@ h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-
 <script>
 const KEY='voyage_v1';
 const TABS=[['overview','Overview'],['itin','Itinerary'],['budget','Budget'],['pack','Packing'],['book','Bookings'],['settings','Settings']];
+const ICO={overview:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',itin:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',budget:'<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/>',pack:'<path d="M9 11l2 2 4-4"/><rect x="4" y="4" width="16" height="16" rx="3"/>',book:'<path d="M4 8a2 2 0 0 0 0 4v4h16v-4a2 2 0 0 1 0-4V4H4zM14 4v12"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'};
 const CATS=['Flight','Hotel','Food','Transport','Activity','Shopping','Other'];
 let S=load(),tab='overview';
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||seed()}catch(e){return seed()}}
@@ -75,19 +115,19 @@ function render(){
  const sel=document.getElementById('tripSel');
  sel.innerHTML=S.trips.map(t=>`<option value="${t.id}" ${t.id===S.cur?'selected':''}>${esc(t.name)}</option>`).join('')||'<option>No trips</option>';
  sel.onchange=e=>{S.cur=e.target.value;save()};
- document.getElementById('nav').innerHTML=TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+ document.getElementById('nav').innerHTML=TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" ${k===tab?'aria-current="page"':''} onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg><span>${l}</span></button>`).join('');
  const t=T(),v=document.getElementById('view');
  if(!t&&tab!=='settings'){v.innerHTML='<div class="card empty">No trips yet. Tap “+ Trip” to start.</div>';return}
  v.innerHTML=({overview,itin,budget,pack,book,settings})[tab](t);
 }
-function go(k){tab=k;try{location.hash=k}catch(e){}render()}
+function go(k){if(k===tab)return scrollTo({top:0,behavior:'smooth'});tab=k;try{history.pushState(null,'','#'+k)}catch(e){}render();scrollTo(0,0)}
 
 function overview(t){
  const spent=t.exp.reduce((a,e)=>a+ +e.amt,0),pct=t.budget?Math.min(100,spent/t.budget*100):0;
  const till=days(today(),t.start),len=days(t.start,t.end)+1;
  const packed=t.pack.filter(p=>p.ok).length;
  const up=S.trips.slice().sort((a,b)=>a.start.localeCompare(b.start));
- return `<div class="card"><div class="row" style="align-items:center"><div><h2 style="margin:0">${esc(t.name)}</h2><div class="mute">📍 ${esc(t.dest)} · ${esc(t.start)} → ${esc(t.end)}</div></div>
+ return `<div class="card full"><div class="row" style="align-items:center"><div><h2 style="margin:0">${esc(t.name)}</h2><div class="mute">📍 ${esc(t.dest)} · ${esc(t.start)} → ${esc(t.end)}</div></div>
  <div style="flex:0"><button class="btn ghost sm" onclick="openTrip('${t.id}')">Edit</button></div></div></div>
  <div class="stats">
  <div class="stat"><small>Countdown</small><b>${till>0?till+' days':till>-len?'On trip 🎉':'Done'}</b></div>
@@ -107,27 +147,27 @@ function addItin(){const w=val('iW');if(!w)return;T().itin.push({id:uid(),date:v
 function budget(t){
  const spent=t.exp.reduce((a,e)=>a+ +e.amt,0),byC={};t.exp.forEach(e=>byC[e.cat]=(byC[e.cat]||0)+ +e.amt);
  return `<div class="stats"><div class="stat"><small>Budget</small><b>${fmt(t.budget)}</b></div><div class="stat"><small>Spent</small><b>${fmt(spent)}</b></div><div class="stat"><small>Remaining</small><b style="color:${t.budget-spent<0?'var(--warn)':'var(--ok)'}">${fmt(t.budget-spent)}</b></div></div>
- <div class="card" style="margin-top:12px"><h2>Add expense</h2><div class="row"><input type="date" id="eD" value="${today()}"><select id="eC">${CATS.map(c=>`<option>${c}</option>`).join('')}</select><input id="eS" placeholder="Description"><input id="eA" type="number" step="0.01" placeholder="Amount"></div>
+ <div class="card" style="margin-top:12px"><h2>Add expense</h2><div class="row"><input type="date" id="eD" value="${today()}"><select id="eC">${CATS.map(c=>`<option>${c}</option>`).join('')}</select><input id="eS" placeholder="Description"><input id="eA" type="number" step="0.01" inputmode="decimal" enterkeyhint="done" placeholder="Amount"></div>
  <div style="margin-top:8px"><button class="btn" onclick="addExp()">Add</button></div></div>
  <div class="card"><h2>By category</h2>${Object.entries(byC).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`<div class="item"><div class="grow">${esc(c)}<div class="bar"><i style="width:${spent?a/spent*100:0}%"></i></div></div><b>${fmt(a)}</b></div>`).join('')||'<div class="empty">No expenses.</div>'}</div>
  <div class="card"><h2>Expenses</h2>${t.exp.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>`<div class="item"><span class="tag">${esc(e.cat)}</span><div class="grow">${esc(e.desc)}<div class="mute">${esc(e.date)}</div></div><b>${fmt(e.amt)}</b><button class="x" onclick="del('exp','${e.id}')">✕</button></div>`).join('')||'<div class="empty">None yet.</div>'}</div>`;
 }
 function addExp(){const a=+val('eA');if(!a)return;T().exp.push({id:uid(),date:val('eD'),cat:val('eC'),desc:val('eS'),amt:a});save()}
 function pack(t){
- return `<div class="card"><div class="row"><input id="pI" placeholder="Add item" onkeydown="if(event.key==='Enter')addPack()"><div style="flex:0"><button class="btn" onclick="addPack()">Add</button></div></div></div>
- <div class="card">${t.pack.map(p=>`<div class="item"><input type="checkbox" style="width:auto" ${p.ok?'checked':''} onchange="togPack('${p.id}')"><div class="grow ${p.ok?'done':''}">${esc(p.t)}</div><button class="x" onclick="del('pack','${p.id}')">✕</button></div>`).join('')||'<div class="empty">Empty list.</div>'}</div>`;
+ return `<div class="card"><div class="row"><input id="pI" placeholder="Add item" enterkeyhint="done" onkeydown="if(event.key==='Enter')addPack()"><div style="flex:0"><button class="btn" onclick="addPack()">Add</button></div></div></div>
+ <div class="card full">${t.pack.map(p=>`<div class="item"><input type="checkbox" style="width:auto" ${p.ok?'checked':''} onchange="togPack('${p.id}')"><div class="grow ${p.ok?'done':''}">${esc(p.t)}</div><button class="x" onclick="del('pack','${p.id}')">✕</button></div>`).join('')||'<div class="empty">Empty list.</div>'}</div>`;
 }
 function addPack(){const v=val('pI');if(!v)return;T().pack.push({id:uid(),t:v,ok:false});save()}
 function togPack(id){const p=T().pack.find(x=>x.id===id);p.ok=!p.ok;save()}
 function book(t){
- return `<div class="card"><h2>Add booking</h2><div class="row"><select id="bT">${['Flight','Hotel','Car','Train','Tour','Insurance','Visa'].map(c=>`<option>${c}</option>`).join('')}</select><input id="bR" placeholder="Ref / PNR"><input id="bD" placeholder="Details (date, time, address)"><input id="bL" placeholder="Link (optional)"></div>
+ return `<div class="card"><h2>Add booking</h2><div class="row"><select id="bT">${['Flight','Hotel','Car','Train','Tour','Insurance','Visa'].map(c=>`<option>${c}</option>`).join('')}</select><input id="bR" placeholder="Ref / PNR"><input id="bD" placeholder="Details (date, time, address)"><input id="bL" type="url" inputmode="url" autocapitalize="off" placeholder="Link (optional)"></div>
  <div style="margin-top:8px"><button class="btn" onclick="addBook()">Add</button></div></div>
  <div class="card">${t.book.map(b=>`<div class="item"><span class="tag">${esc(b.type)}</span><div class="grow"><b>${esc(b.ref)}</b><div class="mute">${esc(b.detail)} ${safeUrl(b.link)?`· <a href="${esc(safeUrl(b.link))}" target="_blank" rel="noopener">open</a>`:''}</div></div><button class="x" onclick="del('book','${b.id}')">✕</button></div>`).join('')||'<div class="empty">No bookings.</div>'}</div>`;
 }
 function addBook(){const r=val('bR');if(!r)return;T().book.push({id:uid(),type:val('bT'),ref:r,detail:val('bD'),link:val('bL')});save()}
 function settings(){
  return `<div class="card"><h2>Google Sheets sync (Apps Script)</h2><p class="mute">Paste your Apps Script web-app URL. Works once hosted on GitHub Pages.</p>
- <input id="sU" value="${esc(S.sync)}" placeholder="https://script.google.com/macros/s/.../exec"><div class="row" style="margin-top:8px"><button class="btn" onclick="S.sync=val('sU');save()">Save URL</button><button class="btn ghost" onclick="push()">Push ↑</button><button class="btn ghost" onclick="pull()">Pull ↓</button></div><div class="mute" id="sMsg"></div></div>
+ <input id="sU" type="url" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(S.sync)}" placeholder="https://script.google.com/macros/s/.../exec"><div class="row" style="margin-top:8px"><button class="btn" onclick="S.sync=val('sU');save()">Save URL</button><button class="btn ghost" onclick="push()">Push ↑</button><button class="btn ghost" onclick="pull()">Pull ↓</button></div><div class="mute" id="sMsg"></div></div>
  <div class="card"><h2>Backup</h2><p class="mute">Copy this JSON to back up, or paste a backup and import.</p><textarea id="bk" style="min-height:120px">${esc(JSON.stringify(S))}</textarea>
  <div class="row" style="margin-top:8px"><button class="btn ghost" onclick="copyBk()">Copy</button><button class="btn ghost" onclick="impBk()">Import</button></div></div>
  ${T()?`<div class="card"><button class="btn" style="background:var(--warn);color:#000" onclick="delTrip()">Delete current trip</button></div>`:''}`;
@@ -143,7 +183,7 @@ function openTrip(id){
  const t=S.trips.find(x=>x.id===id)||{name:'',dest:'',start:'',end:'',budget:'',ccy:'MYR'};
  dlg(`<h2>${id?'Edit':'New'} trip</h2><div class="row"><input id="tN" placeholder="Trip name" value="${esc(t.name)}"><input id="tDst" placeholder="Destination" value="${esc(t.dest)}"></div>
  <div class="row" style="margin-top:8px"><input type="date" id="tS" value="${t.start}"><input type="date" id="tE" value="${t.end}"></div>
- <div class="row" style="margin-top:8px"><input type="number" id="tB" placeholder="Budget" value="${t.budget}"><input id="tC" placeholder="Currency" value="${esc(t.ccy)}"></div>
+ <div class="row" style="margin-top:8px"><input type="number" id="tB" inputmode="decimal" placeholder="Budget" value="${t.budget}"><input id="tC" placeholder="Currency" value="${esc(t.ccy)}"></div>
  <div class="row" style="margin-top:12px"><button class="btn" onclick="saveTrip('${id||''}')">Save</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`);
 }
 function saveTrip(id){
@@ -153,10 +193,26 @@ function saveTrip(id){
 }
 function del(k,id){T()[k]=T()[k].filter(x=>x.id!==id);save()}
 function val(id){return document.getElementById(id)?.value.trim()||''}
-function dlg(h){document.getElementById('dlgBody').innerHTML=h;document.getElementById('dlg').classList.add('on')}
-function closeDlg(){document.getElementById('dlg').classList.remove('on')}
+function dlg(h){const d=document.getElementById('dlg'),was=d.classList.contains('on');document.getElementById('dlgBody').innerHTML=h;d.classList.add('on');document.body.classList.add('lock');
+ if(!was)try{history.pushState({dlg:1},'')}catch(e){}
+ if(matchMedia('(pointer:fine)').matches)setTimeout(()=>d.querySelector('input,select,textarea,button')?.focus(),50)}
+function hideDlg(){document.getElementById('dlg').classList.remove('on');document.body.classList.remove('lock')}
+function closeDlg(){if(!document.getElementById('dlg').classList.contains('on'))return;hideDlg();if(history.state&&history.state.dlg)history.back()}
 function confirmBox(m,fn){window._cf=fn;dlg(`<p>${m}</p><div class="row"><button class="btn" style="background:var(--warn);color:#000" onclick="closeDlg();_cf()">Yes</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`)}
 const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))tab=h;
+// Android back button / browser back: close an open dialog first, otherwise go back a tab
+addEventListener('popstate',()=>{if(document.getElementById('dlg').classList.contains('on')){hideDlg();return}
+ const k=location.hash.slice(1);tab=TABS.some(t=>t[0]===k)?k:'overview';render()});
+// keyboard (PC / iPad with keyboard): Esc closes, Enter submits, 1–6 switch tabs, N = new trip
+addEventListener('keydown',e=>{const tg=e.target,typing=/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName);
+ if(e.key==='Escape')return closeDlg();
+ if(e.key==='Enter'&&tg.tagName==='INPUT'&&!tg.onkeydown){const b=tg.closest('.card')?.querySelector('.btn:not(.ghost)');if(b){e.preventDefault();b.click()}return}
+ if(typing||e.metaKey||e.ctrlKey||e.altKey||document.getElementById('dlg').classList.contains('on'))return;
+ if(/^[1-6]$/.test(e.key))go(TABS[e.key-1][0]);else if(e.key.toLowerCase()==='n')openTrip()});
+// sync across tabs/windows on the same device
+addEventListener('storage',e=>{if(e.key===KEY){S=load();render()}});
+// offline support & install to home screen
+if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 render();
 </script>
 </body>

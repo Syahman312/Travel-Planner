@@ -10,7 +10,12 @@ A single-file travel planner web app. No build step, no dependencies. Data is sa
 - **Packing** checklist
 - **Bookings**: flight, hotel, car and other references, with links
 - **Settings**: Google Sheets sync (push and pull), JSON backup and import, delete a trip
-- Light and dark mode, works on phones
+- **Works on every device**
+  - iPhone and Android: bottom tab bar, notch and home-bar safe areas, no zoom-on-tap, the right number keypad, Android back button closes pop-ups
+  - iPad, tablets and PC: sidebar navigation, two-column layout on wide screens, hover states
+  - Keyboard: `1`–`6` switch tabs, `N` new trip, `Enter` adds, `Esc` closes
+  - **Install to home screen** (Safari → Share → Add to Home Screen, or Chrome → Install app). Works offline after the first visit.
+  - Printable itinerary (browser Print)
 
 ## Run it
 Open `index.html` in a browser, or host it on GitHub Pages:
