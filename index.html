@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0f766e">
+<title>Voyage – Travel Planner</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#1c2430;--mute:#6b7685;--line:#e3e7ec;--acc:#0f766e;--acc2:#e6f4f2;--warn:#c2410c;--ok:#15803d}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1418;--card:#182027;--ink:#e8edf2;--mute:#93a0ad;--line:#26313a;--acc:#2dd4bf;--acc2:#12302d;--warn:#fb923c;--ok:#4ade80}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;align-items:center}
+header h1{font-size:18px;margin:0;flex:1}header h1 span{color:var(--acc)}
+select,input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+textarea{min-height:60px}
+nav{display:flex;gap:4px;overflow-x:auto;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
+nav button{flex:none;border:0;background:none;color:var(--mute);padding:8px 12px;border-radius:999px;font:inherit;cursor:pointer}
+nav button.on{background:var(--acc2);color:var(--acc);font-weight:600}
+main{max-width:860px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 140px}
+.btn{border:0;background:var(--acc);color:#fff;border-radius:8px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer}
+@media(prefers-color-scheme:dark){.btn{color:#062421}}
+.btn.ghost{background:var(--acc2);color:var(--acc)}.btn.sm{padding:5px 10px;font-size:13px}
+.x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}.stat b{display:block;font-size:22px}.stat small{color:var(--mute)}
+.item{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}.item:first-child{border-top:0}
+.item .grow{flex:1;min-width:0}.mute{color:var(--mute);font-size:13px}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+.tag{font-size:12px;padding:2px 8px;border-radius:99px;background:var(--acc2);color:var(--acc)}
+h2{font-size:16px;margin:0 0 10px}.empty{color:var(--mute);text-align:center;padding:20px}
+.done{text-decoration:line-through;color:var(--mute)}
+.dialog{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.dialog.on{display:flex}.dialog .card{width:100%;max-width:480px;max-height:90vh;overflow:auto}
+</style>
+</head>
+<body>
+<header><h1>✈️ <span>Voyage</span></h1><select id="tripSel" style="max-width:200px"></select><button class="btn sm" onclick="openTrip()">+ Trip</button></header>
+<nav id="nav"></nav>
+<main id="view"></main>
+
+<div class="dialog" id="dlg" onclick="if(event.target===this)closeDlg()"><div class="card" id="dlgBody"></div></div>
+
+<script>
+const KEY='voyage_v1';
+const TABS=[['overview','Overview'],['itin','Itinerary'],['budget','Budget'],['pack','Packing'],['book','Bookings'],['settings','Settings']];
+const CATS=['Flight','Hotel','Food','Transport','Activity','Shopping','Other'];
+let S=load(),tab='overview';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||seed()}catch(e){return seed()}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render()}
+function uid(){return Math.random().toString(36).slice(2,9)}
+function seed(){const id=uid();return{cur:id,sync:'',trips:[{id,name:'Sample: Tokyo',dest:'Tokyo, Japan',start:'2027-03-10',end:'2027-03-15',budget:6000,ccy:'MYR',notes:'',
+ itin:[{id:uid(),date:'2027-03-10',time:'09:00',what:'Flight KUL → HND',where:'KLIA'},{id:uid(),date:'2027-03-11',time:'10:00',what:'Senso-ji & Asakusa',where:'Asakusa'}],
+ exp:[{id:uid(),date:'2027-01-05',cat:'Flight',desc:'Return tickets',amt:1800,paid:true}],
+ pack:['Passport','Power adapter','Charger','Medication','Jacket'].map(t=>({id:uid(),t,ok:false})),
+ book:[{id:uid(),type:'Flight',ref:'ABC123',detail:'MH88, 10 Mar 09:00',link:''}]}]}}
+const T=()=>S.trips.find(t=>t.id===S.cur)||S.trips[0];
+const fmt=n=>(T()?.ccy||'MYR')+' '+Number(n||0).toLocaleString(undefined,{maximumFractionDigits:2});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const days=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
+
+function render(){
+ const sel=document.getElementById('tripSel');
+ sel.innerHTML=S.trips.map(t=>`<option value="${t.id}" ${t.id===S.cur?'selected':''}>${esc(t.name)}</option>`).join('')||'<option>No trips</option>';
+ sel.onchange=e=>{S.cur=e.target.value;save()};
+ document.getElementById('nav').innerHTML=TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+ const t=T(),v=document.getElementById('view');
+ if(!t&&tab!=='settings'){v.innerHTML='<div class="card empty">No trips yet. Tap “+ Trip” to start.</div>';return}
+ v.innerHTML=({overview,itin,budget,pack,book,settings})[tab](t);
+}
+function go(k){tab=k;try{location.hash=k}catch(e){}render()}
+
+function overview(t){
+ const spent=t.exp.reduce((a,e)=>a+ +e.amt,0),pct=t.budget?Math.min(100,spent/t.budget*100):0;
+ const till=days(today(),t.start),len=days(t.start,t.end)+1;
+ const packed=t.pack.filter(p=>p.ok).length;
+ const up=S.trips.slice().sort((a,b)=>a.start.localeCompare(b.start));
+ return `<div class="card"><div class="row" style="align-items:center"><div><h2 style="margin:0">${esc(t.name)}</h2><div class="mute">📍 ${esc(t.dest)} · ${esc(t.start)} → ${esc(t.end)}</div></div>
+ <div style="flex:0"><button class="btn ghost sm" onclick="openTrip('${t.id}')">Edit</button></div></div></div>
+ <div class="stats">
+ <div class="stat"><small>Countdown</small><b>${till>0?till+' days':till>-len?'On trip 🎉':'Done'}</b></div>
+ <div class="stat"><small>Duration</small><b>${len} days</b></div>
+ <div class="stat"><small>Spent / Budget</small><b>${Math.round(pct)}%</b><div class="bar"><i style="width:${pct}%;background:${pct>90?'var(--warn)':'var(--acc)'}"></i></div><small>${fmt(spent)} of ${fmt(t.budget)}</small></div>
+ <div class="stat"><small>Packed</small><b>${packed}/${t.pack.length}</b></div></div>
+ <div class="card" style="margin-top:12px"><h2>Notes</h2><textarea id="tNotes" placeholder="Visa info, emergency contacts, ideas…" onchange="T().notes=this.value;save()">${esc(t.notes)}</textarea></div>
+ <div class="card"><h2>All trips</h2>${up.map(x=>`<div class="item"><div class="grow"><b>${esc(x.name)}</b><div class="mute">${esc(x.dest)} · ${esc(x.start)}</div></div><button class="btn ghost sm" onclick="S.cur='${x.id}';save()">Open</button></div>`).join('')}</div>`;
+}
+function itin(t){
+ const by={};t.itin.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
+ return `<div class="card"><h2>Add activity</h2><div class="row"><input type="date" id="iD" value="${t.start}"><input type="time" id="iT"><input id="iW" placeholder="What"><input id="iP" placeholder="Where"></div>
+ <div style="margin-top:8px"><button class="btn" onclick="addItin()">Add</button></div></div>
+ ${Object.keys(by).length?Object.entries(by).map(([d,l])=>`<div class="card"><h2>Day ${days(t.start,d)+1} · ${new Date(d+'T00:00').toDateString()}</h2>${l.map(i=>`<div class="item"><span class="tag">${esc(i.time)||'—'}</span><div class="grow"><b>${esc(i.what)}</b><div class="mute">${esc(i.where)}</div></div><button class="x" onclick="del('itin','${i.id}')">✕</button></div>`).join('')}</div>`).join(''):'<div class="card empty">No activities yet.</div>'}`;
+}
+function addItin(){const w=val('iW');if(!w)return;T().itin.push({id:uid(),date:val('iD'),time:val('iT'),what:w,where:val('iP')});save()}
+function budget(t){
+ const spent=t.exp.reduce((a,e)=>a+ +e.amt,0),byC={};t.exp.forEach(e=>byC[e.cat]=(byC[e.cat]||0)+ +e.amt);
+ return `<div class="stats"><div class="stat"><small>Budget</small><b>${fmt(t.budget)}</b></div><div class="stat"><small>Spent</small><b>${fmt(spent)}</b></div><div class="stat"><small>Remaining</small><b style="color:${t.budget-spent<0?'var(--warn)':'var(--ok)'}">${fmt(t.budget-spent)}</b></div></div>
+ <div class="card" style="margin-top:12px"><h2>Add expense</h2><div class="row"><input type="date" id="eD" value="${today()}"><select id="eC">${CATS.map(c=>`<option>${c}</option>`).join('')}</select><input id="eS" placeholder="Description"><input id="eA" type="number" step="0.01" placeholder="Amount"></div>
+ <div style="margin-top:8px"><button class="btn" onclick="addExp()">Add</button></div></div>
+ <div class="card"><h2>By category</h2>${Object.entries(byC).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`<div class="item"><div class="grow">${esc(c)}<div class="bar"><i style="width:${spent?a/spent*100:0}%"></i></div></div><b>${fmt(a)}</b></div>`).join('')||'<div class="empty">No expenses.</div>'}</div>
+ <div class="card"><h2>Expenses</h2>${t.exp.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>`<div class="item"><span class="tag">${esc(e.cat)}</span><div class="grow">${esc(e.desc)}<div class="mute">${esc(e.date)}</div></div><b>${fmt(e.amt)}</b><button class="x" onclick="del('exp','${e.id}')">✕</button></div>`).join('')||'<div class="empty">None yet.</div>'}</div>`;
+}
+function addExp(){const a=+val('eA');if(!a)return;T().exp.push({id:uid(),date:val('eD'),cat:val('eC'),desc:val('eS'),amt:a});save()}
+function pack(t){
+ return `<div class="card"><div class="row"><input id="pI" placeholder="Add item" onkeydown="if(event.key==='Enter')addPack()"><div style="flex:0"><button class="btn" onclick="addPack()">Add</button></div></div></div>
+ <div class="card">${t.pack.map(p=>`<div class="item"><input type="checkbox" style="width:auto" ${p.ok?'checked':''} onchange="togPack('${p.id}')"><div class="grow ${p.ok?'done':''}">${esc(p.t)}</div><button class="x" onclick="del('pack','${p.id}')">✕</button></div>`).join('')||'<div class="empty">Empty list.</div>'}</div>`;
+}
+function addPack(){const v=val('pI');if(!v)return;T().pack.push({id:uid(),t:v,ok:false});save()}
+function togPack(id){const p=T().pack.find(x=>x.id===id);p.ok=!p.ok;save()}
+function book(t){
+ return `<div class="card"><h2>Add booking</h2><div class="row"><select id="bT">${['Flight','Hotel','Car','Train','Tour','Insurance','Visa'].map(c=>`<option>${c}</option>`).join('')}</select><input id="bR" placeholder="Ref / PNR"><input id="bD" placeholder="Details (date, time, address)"><input id="bL" placeholder="Link (optional)"></div>
+ <div style="margin-top:8px"><button class="btn" onclick="addBook()">Add</button></div></div>
+ <div class="card">${t.book.map(b=>`<div class="item"><span class="tag">${esc(b.type)}</span><div class="grow"><b>${esc(b.ref)}</b><div class="mute">${esc(b.detail)} ${safeUrl(b.link)?`· <a href="${esc(safeUrl(b.link))}" target="_blank" rel="noopener">open</a>`:''}</div></div><button class="x" onclick="del('book','${b.id}')">✕</button></div>`).join('')||'<div class="empty">No bookings.</div>'}</div>`;
+}
+function addBook(){const r=val('bR');if(!r)return;T().book.push({id:uid(),type:val('bT'),ref:r,detail:val('bD'),link:val('bL')});save()}
+function settings(){
+ return `<div class="card"><h2>Google Sheets sync (Apps Script)</h2><p class="mute">Paste your Apps Script web-app URL. Works once hosted on GitHub Pages.</p>
+ <input id="sU" value="${esc(S.sync)}" placeholder="https://script.google.com/macros/s/.../exec"><div class="row" style="margin-top:8px"><button class="btn" onclick="S.sync=val('sU');save()">Save URL</button><button class="btn ghost" onclick="push()">Push ↑</button><button class="btn ghost" onclick="pull()">Pull ↓</button></div><div class="mute" id="sMsg"></div></div>
+ <div class="card"><h2>Backup</h2><p class="mute">Copy this JSON to back up, or paste a backup and import.</p><textarea id="bk" style="min-height:120px">${esc(JSON.stringify(S))}</textarea>
+ <div class="row" style="margin-top:8px"><button class="btn ghost" onclick="copyBk()">Copy</button><button class="btn ghost" onclick="impBk()">Import</button></div></div>
+ ${T()?`<div class="card"><button class="btn" style="background:var(--warn)" onclick="delTrip()">Delete current trip</button></div>`:''}`;
+}
+async function push(){if(!S.sync)return msg('Save your Apps Script URL first.');msg('Pushing…');try{const r=await fetch(S.sync,{method:'POST',body:JSON.stringify({app:'voyage',data:S})});const d=await r.json().catch(()=>({}));msg(d.ok?'Pushed ✓ '+new Date().toLocaleTimeString():'Push failed: '+(d.error||r.status))}catch(e){msg('Push failed: '+e.message)}}
+function pull(){if(!S.sync)return msg('Save your Apps Script URL first.');confirmBox('Replace data on this device with the copy in Google Sheets?',doPull)}
+async function doPull(){tab='settings';render();msg('Pulling…');try{const url=S.sync;const r=await fetch(url+'?app=voyage');const d=await r.json();if(d&&d.trips){S=d;S.sync=S.sync||url;save();msg('Pulled ✓')}else msg('No data in sheet yet — push first.')}catch(e){msg('Pull failed: '+e.message)}}
+function msg(m){const e=document.getElementById('sMsg');if(e)e.textContent=m}
+function copyBk(){navigator.clipboard.writeText(val('bk')).catch(()=>{})}
+function impBk(){try{const d=JSON.parse(val('bk'));if(d.trips){S=d;save();alert('Imported ✓')}else alert('Not a Voyage backup')}catch(e){alert('Invalid JSON')}}
+function delTrip(){confirmBox('Delete this trip?',()=>{S.trips=S.trips.filter(t=>t.id!==S.cur);S.cur=S.trips[0]?.id;save()})}
+function openTrip(id){
+ const t=S.trips.find(x=>x.id===id)||{name:'',dest:'',start:'',end:'',budget:'',ccy:'MYR'};
+ dlg(`<h2>${id?'Edit':'New'} trip</h2><div class="row"><input id="tN" placeholder="Trip name" value="${esc(t.name)}"><input id="tDst" placeholder="Destination" value="${esc(t.dest)}"></div>
+ <div class="row" style="margin-top:8px"><input type="date" id="tS" value="${t.start}"><input type="date" id="tE" value="${t.end}"></div>
+ <div class="row" style="margin-top:8px"><input type="number" id="tB" placeholder="Budget" value="${t.budget}"><input id="tC" placeholder="Currency" value="${esc(t.ccy)}"></div>
+ <div class="row" style="margin-top:12px"><button class="btn" onclick="saveTrip('${id||''}')">Save</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`);
+}
+function saveTrip(id){
+ const d={name:val('tN')||'Untitled',dest:val('tDst'),start:val('tS')||today(),end:val('tE')||val('tS'),budget:+val('tB')||0,ccy:val('tC')||'MYR'};
+ if(id)Object.assign(S.trips.find(x=>x.id===id),d);else{const n={id:uid(),...d,notes:'',itin:[],exp:[],pack:[],book:[]};S.trips.push(n);S.cur=n.id}
+ closeDlg();save();
+}
+function del(k,id){T()[k]=T()[k].filter(x=>x.id!==id);save()}
+function val(id){return document.getElementById(id)?.value.trim()||''}
+function dlg(h){document.getElementById('dlgBody').innerHTML=h;document.getElementById('dlg').classList.add('on')}
+function closeDlg(){document.getElementById('dlg').classList.remove('on')}
+function confirmBox(m,fn){window._cf=fn;dlg(`<p>${m}</p><div class="row"><button class="btn" style="background:var(--warn)" onclick="closeDlg();_cf()">Yes</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`)}
+const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))tab=h;
+render();
+</script>
+</body>
+</html>
