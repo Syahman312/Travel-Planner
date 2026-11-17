@@ -2,42 +2,50 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#0f766e">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Voyage – Travel Planner</title>
 <style>
-:root{--bg:#f4f6f8;--card:#fff;--ink:#1c2430;--mute:#6b7685;--line:#e3e7ec;--acc:#0f766e;--acc2:#e6f4f2;--warn:#c2410c;--ok:#15803d}
-@media(prefers-color-scheme:dark){:root{--bg:#0f1418;--card:#182027;--ink:#e8edf2;--mute:#93a0ad;--line:#26313a;--acc:#2dd4bf;--acc2:#12302d;--warn:#fb923c;--ok:#4ade80}}
-*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;align-items:center}
-header h1{font-size:18px;margin:0;flex:1}header h1 span{color:var(--acc)}
-select,input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+:root{color-scheme:dark;--bg:#000;--card:#0b0b0b;--c2:#16171a;--ink:#f0f0f0;--mute:#7d7d7d;--line:#1c1c1c;--line2:#24252a;--acc:#e8e8e8;--cy:#22e3ff;--warn:#f87171;--amb:#fbbf24;--ok:#4ade80}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:#000;border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;gap:10px;align-items:center}
+header h1{font:600 18px system-ui,sans-serif;margin:0;flex:1;white-space:nowrap}header h1 span{color:var(--ink)}
+button,input,textarea,select{font:inherit;color:inherit}
+select,input,textarea{color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
+input[type=checkbox]{accent-color:var(--cy);width:20px!important;height:20px;padding:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 textarea{min-height:60px}
-nav{display:flex;gap:4px;overflow-x:auto;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line)}
-nav button{flex:none;border:0;background:none;color:var(--mute);padding:8px 12px;border-radius:999px;font:inherit;cursor:pointer}
-nav button.on{background:var(--acc2);color:var(--acc);font-weight:600}
-main{max-width:860px;margin:0 auto;padding:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:4;display:flex;overflow-x:auto;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1 1 0;min-width:0;border:0;background:none;color:var(--mute);padding:15px 2px;font-size:12.5px;white-space:nowrap;cursor:pointer;border-radius:0}
+nav button.on{color:var(--acc);box-shadow:inset 0 3px var(--acc);font-weight:600}
+main{max-width:720px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
 .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 140px}
-.btn{border:0;background:var(--acc);color:#fff;border-radius:8px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer}
-@media(prefers-color-scheme:dark){.btn{color:#062421}}
-.btn.ghost{background:var(--acc2);color:var(--acc)}.btn.sm{padding:5px 10px;font-size:13px}
+.btn{border:0;background:var(--acc);color:var(--bg);border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--acc);border:1px solid var(--line2)}.btn.sm{padding:6px 12px;font-size:13.5px}
 .x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}.stat b{display:block;font-size:22px}.stat small{color:var(--mute)}
-.item{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}.item:first-child{border-top:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.stat{background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:10px 12px}.stat b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.stat small{color:var(--mute)}
+.item{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line2)}.item:first-child{border-top:0}
 .item .grow{flex:1;min-width:0}.mute{color:var(--mute);font-size:13px}
-.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
-.tag{font-size:12px;padding:2px 8px;border-radius:99px;background:var(--acc2);color:var(--acc)}
-h2{font-size:16px;margin:0 0 10px}.empty{color:var(--mute);text-align:center;padding:20px}
+.bar{height:6px;background:var(--line2);border-radius:99px;overflow:hidden;margin:4px 0}.bar i{display:block;height:100%;background:var(--cy)}
+.tag{font-size:12px;font-weight:600;padding:1px 9px;border-radius:99px;border:1px solid currentColor;color:var(--cy);white-space:nowrap}
+h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-align:center;padding:20px}
 .done{text-decoration:line-through;color:var(--mute)}
-.dialog{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
-.dialog.on{display:flex}.dialog .card{width:100%;max-width:480px;max-height:90vh;overflow:auto}
+.dialog{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.dialog.on{display:flex}.dialog .card{width:100%;max-width:460px;max-height:92vh;overflow:auto;background:#0b0b0c;border-radius:16px;padding:18px;animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(24px);opacity:0}}
+@media(max-width:759px){.dialog{align-items:flex-end;padding:0}.dialog .card{max-width:100%;border-radius:22px 22px 0 0;margin:0;padding:8px 16px calc(18px + env(safe-area-inset-bottom));animation:sheet .28s cubic-bezier(.2,.8,.2,1)}
+.dialog .card::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:var(--line2);margin:0 auto 12px}}
+@keyframes sheet{from{transform:translateY(100%)}}
 </style>
 </head>
 <body>
-<header><h1>✈️ <span>Voyage</span></h1><select id="tripSel" style="max-width:200px"></select><button class="btn sm" onclick="openTrip()">+ Trip</button></header>
+<header><h1>✈️ <span>Voyage</span></h1><select id="tripSel" style="max-width:200px;min-width:0"></select><button class="btn sm" style="white-space:nowrap;flex:none" onclick="openTrip()">+ Trip</button></header>
 <nav id="nav"></nav>
 <main id="view"></main>
 
@@ -84,7 +92,7 @@ function overview(t){
  <div class="stats">
  <div class="stat"><small>Countdown</small><b>${till>0?till+' days':till>-len?'On trip 🎉':'Done'}</b></div>
  <div class="stat"><small>Duration</small><b>${len} days</b></div>
- <div class="stat"><small>Spent / Budget</small><b>${Math.round(pct)}%</b><div class="bar"><i style="width:${pct}%;background:${pct>90?'var(--warn)':'var(--acc)'}"></i></div><small>${fmt(spent)} of ${fmt(t.budget)}</small></div>
+ <div class="stat"><small>Spent / Budget</small><b>${Math.round(pct)}%</b><div class="bar"><i style="width:${pct}%;background:${pct>90?'var(--warn)':pct>75?'var(--amb)':'var(--cy)'}"></i></div><small>${fmt(spent)} of ${fmt(t.budget)}</small></div>
  <div class="stat"><small>Packed</small><b>${packed}/${t.pack.length}</b></div></div>
  <div class="card" style="margin-top:12px"><h2>Notes</h2><textarea id="tNotes" placeholder="Visa info, emergency contacts, ideas…" onchange="T().notes=this.value;save()">${esc(t.notes)}</textarea></div>
  <div class="card"><h2>All trips</h2>${up.map(x=>`<div class="item"><div class="grow"><b>${esc(x.name)}</b><div class="mute">${esc(x.dest)} · ${esc(x.start)}</div></div><button class="btn ghost sm" onclick="S.cur='${x.id}';save()">Open</button></div>`).join('')}</div>`;
@@ -122,7 +130,7 @@ function settings(){
  <input id="sU" value="${esc(S.sync)}" placeholder="https://script.google.com/macros/s/.../exec"><div class="row" style="margin-top:8px"><button class="btn" onclick="S.sync=val('sU');save()">Save URL</button><button class="btn ghost" onclick="push()">Push ↑</button><button class="btn ghost" onclick="pull()">Pull ↓</button></div><div class="mute" id="sMsg"></div></div>
  <div class="card"><h2>Backup</h2><p class="mute">Copy this JSON to back up, or paste a backup and import.</p><textarea id="bk" style="min-height:120px">${esc(JSON.stringify(S))}</textarea>
  <div class="row" style="margin-top:8px"><button class="btn ghost" onclick="copyBk()">Copy</button><button class="btn ghost" onclick="impBk()">Import</button></div></div>
- ${T()?`<div class="card"><button class="btn" style="background:var(--warn)" onclick="delTrip()">Delete current trip</button></div>`:''}`;
+ ${T()?`<div class="card"><button class="btn" style="background:var(--warn);color:#000" onclick="delTrip()">Delete current trip</button></div>`:''}`;
 }
 async function push(){if(!S.sync)return msg('Save your Apps Script URL first.');msg('Pushing…');try{const r=await fetch(S.sync,{method:'POST',body:JSON.stringify({app:'voyage',data:S})});const d=await r.json().catch(()=>({}));msg(d.ok?'Pushed ✓ '+new Date().toLocaleTimeString():'Push failed: '+(d.error||r.status))}catch(e){msg('Push failed: '+e.message)}}
 function pull(){if(!S.sync)return msg('Save your Apps Script URL first.');confirmBox('Replace data on this device with the copy in Google Sheets?',doPull)}
@@ -147,7 +155,7 @@ function del(k,id){T()[k]=T()[k].filter(x=>x.id!==id);save()}
 function val(id){return document.getElementById(id)?.value.trim()||''}
 function dlg(h){document.getElementById('dlgBody').innerHTML=h;document.getElementById('dlg').classList.add('on')}
 function closeDlg(){document.getElementById('dlg').classList.remove('on')}
-function confirmBox(m,fn){window._cf=fn;dlg(`<p>${m}</p><div class="row"><button class="btn" style="background:var(--warn)" onclick="closeDlg();_cf()">Yes</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`)}
+function confirmBox(m,fn){window._cf=fn;dlg(`<p>${m}</p><div class="row"><button class="btn" style="background:var(--warn);color:#000" onclick="closeDlg();_cf()">Yes</button><button class="btn ghost" onclick="closeDlg()">Cancel</button></div>`)}
 const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))tab=h;
 render();
 </script>
