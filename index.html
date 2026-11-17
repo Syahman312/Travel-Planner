@@ -35,7 +35,8 @@ nav{position:fixed;bottom:0;left:0;right:0;z-index:4;display:flex;background:col
 nav button{flex:1 1 0;min-width:0;border:0;background:none;color:var(--mute);padding:8px 2px 9px;font-size:11px;white-space:nowrap;cursor:pointer;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:52px}
 nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{color:var(--acc);box-shadow:inset 0 3px var(--acc);font-weight:600}
-main{max-width:720px;margin:0 auto;padding:14px calc(14px + env(safe-area-inset-right)) 14px calc(14px + env(safe-area-inset-left))}
+main{position:relative;overflow-x:clip;touch-action:pan-y pinch-zoom;min-height:calc(100dvh - 150px)}
+.vw{max-width:720px;margin:0 auto;padding:14px calc(14px + env(safe-area-inset-right)) 14px calc(14px + env(safe-area-inset-left))}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
 .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 140px}
 .btn{border:0;background:var(--acc);color:var(--bg);border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
@@ -58,7 +59,7 @@ h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-
 @keyframes sheet{from{transform:translateY(100%)}}
 .dialog .card{overscroll-behavior:contain;max-height:92dvh}
 /* small phones (iPhone SE / mini) */
-@media(max-width:359px){header h1 span{display:none}header h1 img{margin-right:0!important}main{padding-left:10px;padding-right:10px}.stat b{font-size:17px}}
+@media(max-width:359px){header h1 span{display:none}header h1 img{margin-right:0!important}.vw{padding-left:10px;padding-right:10px}.stat b{font-size:17px}}
 /* phones in landscape: slimmer bars */
 @media(orientation:landscape) and (max-height:500px){nav button{min-height:40px;flex-direction:row;justify-content:center;gap:6px;font-size:12px;padding:6px 2px}nav svg{width:18px;height:18px}header{position:static}}
 /* tablets & PCs: side navigation */
@@ -68,15 +69,15 @@ h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-
  nav button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;font-size:15px;padding:11px 14px;border-radius:10px;min-height:44px}
  nav button.on{box-shadow:none;background:var(--c2)}
  nav svg{width:20px;height:20px}
- main{max-width:1100px;padding:20px 28px}
+ .vw{max-width:1100px;padding:20px 28px}
  #tripSel{max-width:280px!important}
 }
 /* large screens: two-column card layout */
 @media(min-width:1100px){
  body{padding-left:220px}nav{width:220px}
- main{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
- main>.full,main>.stats,main>.empty{grid-column:1/-1}
- main>.stats{margin-bottom:8px}main>.card[style*="margin-top"]{margin-top:0!important}
+ .vw{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
+ .vw>.full,.vw>.stats,.vw>.empty{grid-column:1/-1}
+ .vw>.stats{margin-bottom:8px}.vw>.card[style*="margin-top"]{margin-top:0!important}
 }
 /* mouse & trackpad */
 @media(hover:hover){.btn:hover{filter:brightness(1.12)}.btn.ghost:hover{background:var(--c2)}nav button:hover{color:var(--ink)}nav button.on:hover{color:var(--acc)}.x:hover{color:var(--warn);background:var(--c2)}}
@@ -126,8 +127,13 @@ button.stat{text-align:left;width:100%;color:inherit;font:inherit;cursor:pointer
 .driver{position:fixed;inset:0;z-index:30;background:#fff;color:#000;display:none;flex-direction:column;justify-content:center;gap:18px;padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));text-align:center;cursor:pointer}
 .driver.on{display:flex}.driver .big{font-size:clamp(28px,7vw,60px);font-weight:700;line-height:1.25;overflow-wrap:anywhere}.driver .sm{font-size:clamp(18px,4vw,28px);color:#333}
 .kbd{font:12px ui-monospace,Menlo,monospace;border:1px solid var(--line2);border-radius:5px;padding:1px 6px;background:var(--c2)}
-@media(min-width:1100px){main>.seg{grid-column:1/-1}}
+@media(min-width:1100px){.vw>.seg{grid-column:1/-1}}
 @media(hover:none){.pc-only{display:none}}
+/* swipe between tabs */
+.swpan{position:absolute;left:0;right:0;margin:0 auto;pointer-events:none;will-change:transform}
+main.swp #view{will-change:transform}
+.tin{animation:tin .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes tin{from{opacity:0;transform:translate3d(var(--d,0),0,0)}}
 #printView{display:none}
 @media print{
  body>*:not(#printView){display:none!important}
@@ -142,7 +148,7 @@ button.stat{text-align:left;width:100%;color:inherit;font:inherit;cursor:pointer
 <body>
 <header><h1><img src="icon.svg" alt="" width="28" height="28" style="vertical-align:-7px;border-radius:7px;margin-right:6px"><span>Voyage</span></h1><button id="pill" class="pill" onclick="go('settings')" aria-label="Sync status"><i class="dot"></i><span>Local only</span></button><select id="tripSel" style="max-width:200px;min-width:0" aria-label="Current trip"></select><button class="btn sm" style="white-space:nowrap;flex:none" onclick="openTrip()">+ Trip</button></header>
 <nav id="nav" aria-label="Sections"></nav>
-<main id="view"></main>
+<main id="main"><div id="view" class="vw"></div></main>
 
 <div class="dialog" id="dlg" onclick="if(event.target===this)closeDlg()"><div class="card" id="dlgBody" role="dialog" aria-modal="true"></div></div>
 <div id="toast" role="status"><span id="toastMsg"></span><button class="btn sm" id="toastBtn">Undo</button></div>
@@ -230,7 +236,9 @@ function render(){
  drawPill();hydrate(v);
 }
 function setCur(id){S.cur=id;persist();render()}
-function go(k){if(k===tab)return scrollTo({top:0,behavior:'smooth'});tab=k;try{history.pushState(null,'','#'+k)}catch(e){}render();scrollTo(0,0)}
+function go(k,swiped){if(k===tab)return scrollTo({top:0,behavior:'smooth'});const dir=Math.sign(ORDER.indexOf(k)-ORDER.indexOf(tab));tab=k;try{history.pushState(null,'','#'+k)}catch(e){}render();scrollTo(0,0);
+ if(!swiped&&!reduceMo()){const v=$('view');v.style.setProperty('--d',dir*48+'px');v.classList.remove('tin');void v.offsetWidth;v.classList.add('tin');clearTimeout(v._t);v._t=setTimeout(()=>v.classList.remove('tin'),320)}}
+const ORDER=TABS.map(t=>t[0]),reduceMo=()=>matchMedia('(prefers-reduced-motion: reduce)').matches,buzz=n=>{try{navigator.vibrate&&navigator.vibrate(n)}catch(e){}};
 
 /* ---------- overview ---------- */
 function overview(t){
@@ -531,6 +539,31 @@ addEventListener('keydown',e=>{const tg=e.target,typing=/^(INPUT|TEXTAREA|SELECT
  if(e.key==='Enter'&&tg.tagName==='INPUT'&&!/checkbox|file/.test(tg.type)){const b=tg.closest('.card')?.querySelector('.btn:not(.ghost)');if(b){e.preventDefault();b.click()}return}
  if(typing||e.metaKey||e.ctrlKey||e.altKey||dlgOpen())return;
  if(/^[1-6]$/.test(e.key))go(TABS[e.key-1][0]);else if(e.key.toLowerCase()==='n')openTrip()});
+// Swipe left/right between tabs: the page follows your finger, the next tab slides in beside it, then snaps.
+(()=>{const m=$('main'),v=$('view');let S=null;
+ const viewOf=k=>{const t=T();if(!t&&k!=='settings')return '<div class="card empty">No trips yet.</div>';try{return ({overview,itin,budget,pack:lists,book,settings})[k](t)}catch(e){return ''}};
+ const panel=k=>{if(!k)return null;const d=document.createElement('div');d.className='vw swpan';d.setAttribute('aria-hidden','true');d.inert=true;d.innerHTML=viewOf(k);d.style.top=Math.max(0,scrollY-m.offsetTop)+'px';m.appendChild(d);hydrate(d);return d};
+ const reset=()=>{if(!S)return;[v,S.pp,S.pn].forEach(e=>{if(e){e.style.transition='';e.style.transform=''}});S.pp?.remove();S.pn?.remove();m.classList.remove('swp');S=null};
+ const place=dx=>{v.style.transform=`translate3d(${dx}px,0,0)`;if(S.pp)S.pp.style.transform=`translate3d(${dx-S.W}px,0,0)`;if(S.pn)S.pn.style.transform=`translate3d(${dx+S.W}px,0,0)`};
+ const hScroll=el=>{for(;el&&el!==m;el=el.parentElement)if(el.scrollWidth>el.clientWidth+2&&/(auto|scroll)/.test(getComputedStyle(el).overflowX))return true;return false};
+ document.addEventListener('touchstart',e=>{if(S&&S.anim)return;reset();const t=e.touches[0];
+  if(e.touches.length>1||reduceMo()||dlgOpen()||$('viewer').classList.contains('on')||$('driver').classList.contains('on')||!m.contains(e.target)||
+   e.target.closest('select,textarea,label.switch,.thumb')||e.target===document.activeElement||hScroll(e.target)||t.clientX<16||t.clientX>innerWidth-16||(window.visualViewport&&visualViewport.scale>1.01))return;
+  S={x:t.clientX,y:t.clientY,lock:0,dx:0,h:[[t.clientX,performance.now()]]}},{passive:true});
+ document.addEventListener('touchmove',e=>{if(!S||S.anim)return;if(e.touches.length>1){if(S.lock){S.anim=1;place(0);setTimeout(reset,0)}else S=null;return}
+  const t=e.touches[0],dx=t.clientX-S.x,dy=t.clientY-S.y;
+  if(!S.lock){if(Math.abs(dx)<10&&Math.abs(dy)<10)return;if(Math.abs(dy)*1.1>=Math.abs(dx)){S=null;return}   // mostly vertical: let the page scroll
+   S.lock=1;S.i=ORDER.indexOf(tab);S.w=v.offsetWidth;S.W=Math.max(m.clientWidth,S.w)+16;S.pp=panel(ORDER[S.i-1]);S.pn=panel(ORDER[S.i+1]);m.classList.add('swp');S.x=t.clientX-dx}
+  e.preventDefault();S.h.push([t.clientX,performance.now()]);if(S.h.length>5)S.h.shift();
+  let d=dx;if((d>0&&!S.pp)||(d<0&&!S.pn))d/=3.5;S.dx=d;place(d)},{passive:false});      // rubber-band at first/last tab
+ const end=()=>{if(!S)return;if(!S.lock||S.anim){if(!S.anim)S=null;return}
+  const h=S.h,a=h[0],b=h[h.length-1],vel=(b[0]-a[0])/Math.max(1,b[1]-a[1]),d=S.dx,
+   dir=d<0&&S.pn&&(d<-S.w*.28||vel<-.35)?1:d>0&&S.pp&&(d>S.w*.28||vel>.35)?-1:0,
+   ms=dir?Math.round(Math.min(320,Math.max(160,(S.W-Math.abs(d))/Math.max(1.2,Math.abs(vel))))):220;S.anim=1;
+  [v,S.pp,S.pn].forEach(e=>{if(e)e.style.transition=`transform ${ms}ms cubic-bezier(.2,.8,.2,1)`});place(dir?-dir*S.W:0);
+  setTimeout(()=>{const nt=dir?ORDER[S.i+dir]:null;reset();if(nt){go(nt,1);buzz(6)}},ms+20)};
+ document.addEventListener('touchend',end,{passive:true});document.addEventListener('touchcancel',end,{passive:true});
+})();
 addEventListener('storage',e=>{if(e.key===KEY&&!dlgOpen()){S=load();render()}});
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 render();autoPull();
