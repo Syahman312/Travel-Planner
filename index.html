@@ -126,6 +126,9 @@ button.stat{text-align:left;width:100%;color:inherit;font:inherit;cursor:pointer
 .vbody{flex:1;overflow:auto;display:grid;place-items:center;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.vbody img{max-width:100%;max-height:calc(100dvh - 90px);object-fit:contain}
 .driver{position:fixed;inset:0;z-index:30;background:#fff;color:#000;display:none;flex-direction:column;justify-content:center;gap:18px;padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));text-align:center;cursor:pointer}
 .driver.on{display:flex}.driver .big{font-size:clamp(28px,7vw,60px);font-weight:700;line-height:1.25;overflow-wrap:anywhere}.driver .sm{font-size:clamp(18px,4vw,28px);color:#333}
+.pw{position:relative}.pw input{padding-right:52px}
+.eye{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:44px;height:40px;border:0;background:none;color:var(--mute);cursor:pointer;display:grid;place-items:center;border-radius:8px}
+.eye svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.eye[aria-pressed=true]{color:var(--cy)}
 .kbd{font:12px ui-monospace,Menlo,monospace;border:1px solid var(--line2);border-radius:5px;padding:1px 6px;background:var(--c2)}
 @media(min-width:1100px){.vw>.seg{grid-column:1/-1}}
 @media(hover:none){.pc-only{display:none}}
@@ -185,6 +188,7 @@ function migrate(s){
  s.sync=s.sync||'';s.auto=!!s.auto;s.drive=s.drive!==false;s.updated=+s.updated||0;
  if(!s.trips.some(t=>t.id===s.cur))s.cur=s.trips[0]?.id;return s}
 function load(){try{return migrate(JSON.parse(localStorage.getItem(KEY)))||seed()}catch(e){return seed()}}
+const TOK_KEY='voyage_token';let TOKEN=(()=>{try{return localStorage.getItem(TOK_KEY)||''}catch(e){return ''}})();
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Storage full – could not save')}}
 function save(){S.updated=Date.now();persist();render();queueSync()}
 function uid(){return Math.random().toString(36).slice(2,9)}
@@ -475,9 +479,11 @@ function delTrip(){const t=T();confirmBox(`Delete “${esc(t.name)}” and every
 function settings(){
  const p=pending().length,nf=S.trips.reduce((a,t)=>a+t.book.reduce((b,x)=>b+x.files.length,0),0);
  return `<div class="card"><h2>Google Sheets & Drive sync</h2>
- <p class="mute" style="margin-top:0">Paste your Apps Script web-app URL (see README). Your trips go to a Google Sheet and ticket photos to a “Voyage” folder in your Google Drive.</p>
- <input id="sU" type="url" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(S.sync)}" placeholder="https://script.google.com/macros/s/.../exec">
- <div class="btns mt"><button class="btn" onclick="saveUrl()">Save URL</button></div>
+ <p class="mute" style="margin-top:0">Paste your Apps Script web-app URL and the secret word you set in Code.gs (see README). Your trips go to a Google Sheet and ticket photos to a “Voyage” folder in your Google Drive.</p>
+ <label class="f"><span>Web app URL</span><input id="sU" type="url" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(S.sync)}" placeholder="https://script.google.com/macros/s/.../exec"></label>
+ <label class="f"><span>Secret word (same as in Code.gs)</span><div class="pw"><input id="sT" type="password" value="${esc(TOKEN)}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Your secret word"><button type="button" class="eye" onclick="peek('sT',this)" aria-label="Show secret word" aria-pressed="false">${EYE[0]}</button></div></label>
+ ${TOKEN&&TOKEN.length<16?'<p class="mute" style="color:var(--amb);margin:-4px 0 10px">Your secret word is short. Someone who finds your web app link could guess it – 16+ characters is safer.</p>':''}
+ <div class="btns"><button class="btn" onclick="saveUrl()">Save</button></div>
  <label class="switch mt"><span>Auto-sync<div class="mute">Saves changes automatically and pulls newer data when you open the app</div></span><input type="checkbox" ${S.auto?'checked':''} onchange="S.auto=this.checked;persist();if(S.auto)autoPull();render()"></label>
  <label class="switch"><span>Save attachments to Google Drive<div class="mute">Photos/PDFs are uploaded when you save a booking</div></span><input type="checkbox" ${S.drive?'checked':''} onchange="S.drive=this.checked;persist();render()"></label>
  <div class="btns mt"><button class="btn ghost" onclick="push()">Push now ↑</button><button class="btn ghost" onclick="pull()">Pull ↓</button>${p&&S.sync?`<button class="btn ghost" onclick="uploadPending()">Upload ${p} file${p>1?'s':''} to Drive</button>`:''}</div><div class="mute mt" id="sMsg">${syncLabel()}</div></div>
@@ -487,7 +493,11 @@ function settings(){
  <div class="card pc-only"><h2>Keyboard shortcuts</h2><div class="mute"><span class="kbd">1</span>–<span class="kbd">6</span> switch tabs · <span class="kbd">N</span> new trip · <span class="kbd">Enter</span> add / save · <span class="kbd">Esc</span> close</div></div>
  ${T()?`<div class="card"><button class="btn" style="background:var(--warn);color:#000" onclick="delTrip()">Delete current trip</button></div>`:''}`;
 }
-function saveUrl(){const u=val('sU');if(u&&!/^https:\/\/script\.google(usercontent)?\.com\//.test(u))return msg('That doesn\'t look like an Apps Script URL.');S.sync=u;persist();render();msg(u?'Saved ✓':'Sync turned off');if(u&&S.auto)autoPull()}
+function saveUrl(){const u=val('sU'),k=$('sT').value.trim();if(u&&!/^https:\/\/script\.google(usercontent)?\.com\//.test(u))return msg('That doesn\'t look like an Apps Script URL.');
+ if(u&&!k)return msg('Enter your secret word (the TOKEN in Code.gs).');S.sync=u;TOKEN=k;try{localStorage.setItem(TOK_KEY,k)}catch(e){}persist();render();msg(u?'Saved ✓':'Sync turned off');if(u)testConn()}
+const EYE=['<svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>','<svg viewBox="0 0 24 24"><path d="M17.9 17.9A10.4 10.4 0 0 1 12 19c-7 0-11-7-11-7a19 19 0 0 1 5.1-5.9M9.9 5.2A9.6 9.6 0 0 1 12 5c7 0 11 7 11 7a19 19 0 0 1-2.2 3.2M14.1 14.1a3 3 0 1 1-4.2-4.2M1 1l22 22"/></svg>'];
+function peek(id,b){const i=$(id),show=i.type==='password';i.type=show?'text':'password';b.innerHTML=EYE[show?1:0];b.setAttribute('aria-pressed',show);b.setAttribute('aria-label',(show?'Hide':'Show')+' secret word')}
+async function testConn(){setSync('busy');try{const d=await post({app:'voyage',action:'ping'});if(d.ok){setSync('ok');msg('Connected ✓ – secret word accepted');if(S.auto)autoPull()}else throw Error(d.error||'failed')}catch(e){setSync(navigator.onLine?'err':'offline',e.message);msg(syncLabel())}}
 function dlBackup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));a.download=`voyage-backup-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1e4)}
 async function restore(f){if(!f)return;try{const d=migrate(JSON.parse(await f.text()));if(!d)throw 0;confirmBox(`Replace all data on this device with this backup (${d.trips.length} trips)?`,()=>{const k={sync:S.sync,auto:S.auto,drive:S.drive};S=Object.assign(d,k);save();toast('Restored ✓')})}catch(e){toast('Not a valid Voyage backup')}}
 function msg(m){const e=$('sMsg');if(e)e.textContent=m}
@@ -502,13 +512,14 @@ function drawPill(){const p=$('pill'),st=!S.sync?'off':sync.st==='idle'?(S.auto?
  p.querySelector('span').textContent=!S.sync?'Local only':{busy:'Syncing',pending:'Saving',ok:sync.at?'Synced '+new Date(sync.at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'Sync on',err:'Sync error',offline:'Offline',off:'Sync off'}[st];
  p.title=syncLabel();if(tab==='settings'){msg(syncLabel());storageInfo()}}
 function setSync(st,err=''){sync.st=st;sync.err=err;if(st==='ok')sync.at=Date.now();drawPill()}
-function post(body){return fetch(S.sync,{method:'POST',body:JSON.stringify(body)}).then(r=>r.json())}
+async function post(body){const r=await fetch(S.sync,{method:'POST',body:JSON.stringify({...body,token:TOKEN}),referrerPolicy:'no-referrer'});const d=await r.json();
+ if(d&&d.ok===false&&/token|secret/i.test(d.error||''))d.error=/locked/i.test(d.error)?d.error:/CHANGE_ME|Set your secret/i.test(d.error)?'Set your secret word in Code.gs first':'Wrong secret word';return d}
 function queueSync(){if(S.auto&&S.sync){clearTimeout(syncT);setSync('pending');syncT=setTimeout(()=>push(true),1500)}}
 async function push(silent){if(!S.sync)return msg('Save your Apps Script URL first.');clearTimeout(syncT);setSync('busy');
  try{const d=await post({app:'voyage',data:S});if(!d.ok)throw Error(d.error||'failed');setSync('ok');if(!silent)toast('Pushed ✓')}
  catch(e){setSync(navigator.onLine?'err':'offline',e.message)}}
 function adopt(d){const k={sync:S.sync,auto:S.auto,drive:S.drive,cur:S.cur};S=migrate(d);Object.assign(S,{sync:k.sync,auto:k.auto,drive:k.drive});if(S.trips.some(t=>t.id===k.cur))S.cur=k.cur;persist();render()}
-async function fetchRemote(){const r=await fetch(S.sync+(S.sync.includes('?')?'&':'?')+'app=voyage');return r.json()}
+async function fetchRemote(){const d=await post({app:'voyage',action:'get'});if(d&&d.ok===false)throw Error(d.error||'failed');return d.data||{}}
 async function autoPull(){if(!S.auto||!S.sync||dlgOpen()||sync.st==='busy')return;setSync('busy');
  try{const d=await fetchRemote();if(d&&d.trips&&(+d.updated||0)>S.updated){adopt(d);setSync('ok')}else if(S.updated>(+d?.updated||0))await push(true);else setSync('ok')}
  catch(e){setSync(navigator.onLine?'err':'offline',e.message)}}

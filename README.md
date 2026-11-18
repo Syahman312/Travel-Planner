@@ -30,16 +30,16 @@ Open `index.html` in a browser, or host it on GitHub Pages:
 
 ## Google Sheets sync (optional)
 1. Create a new Google Sheet → **Extensions → Apps Script**.
-2. Paste the contents of [`Code.gs`](Code.gs) and save.
+2. Paste the contents of [`Code.gs`](Code.gs). Change `TOKEN = 'CHANGE_ME'` near the top to your own long secret word (16+ characters), then save.
 3. **Deploy → New deployment → Web app**, Execute as **Me**, Who has access **Anyone**.
-4. Copy the `/exec` URL into the app: **Settings → Save URL**.
+4. In the app go to **Settings**, paste the `/exec` URL and the same **secret word**, then tap **Save**. It says *Connected ✓* when the word matches. The 👁 button shows or hides the word as you type.
 5. Turn on **Auto-sync**. Changes save automatically, and opening the app on another device pulls the newest copy. **Push ↑** / **Pull ↓** do it by hand.
 6. Keep **Save attachments to Google Drive** on to upload booking photos and PDFs to *Google Drive → Voyage → trip name*. The files stay private to your account.
 
 The sheet gets readable **Trips / Itinerary / Expenses / To-do / Packing / Bookings / Essentials** tabs, plus a hidden `_voyage` tab that holds the full data.
 
-**Already deployed the old `Code.gs`?** Paste the new version, then **Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy**, and approve the new Google Drive permission. The URL stays the same.
+**Already deployed an older `Code.gs`?** Paste the new version, set your `TOKEN`, then **Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy** (approve the Google Drive permission if asked). The URL stays the same. Then type the same secret word in the app.
 
 Photos are stored on each device, so another phone shows them as links to Drive instead. Backups don't include photos.
 
-> The URL lets anyone who has it read and overwrite your planner data, so keep it private.
+> Every read and write needs the secret word, so the URL alone shows nothing. After 20 wrong tries the script locks for 10 minutes. The secret word is saved only on each device, never in the Sheet.
