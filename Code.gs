@@ -2,12 +2,11 @@
  * Voyage – Travel Planner sync backend (Google Apps Script)
  *
  * Setup:
- *  1. Create a Google Sheet → Extensions → Apps Script → paste this file.
- *     Change TOKEN below to your own long secret word (16+ characters) → Save.
+ *  1. Create a Google Sheet → Extensions → Apps Script → paste this file → Save.
  *  2. Deploy → New deployment → Web app
  *       Execute as: Me    ·    Who has access: Anyone
  *     Approve the permissions (Sheets + Drive).
- *  3. In Voyage → Settings, paste the /exec URL and the same secret word → Save.
+ *  3. Copy the /exec URL into Voyage → Settings → "Google Sheets & Drive sync".
  *
  *  Updating this file later: Deploy → Manage deployments → ✏️ Edit →
  *  Version: "New version" → Deploy. The URL stays the same.
@@ -20,29 +19,19 @@
  *    Files stay private to your Google account.
  */
 
-// Your secret word – type the same one in Voyage → Settings. Every request must carry it.
-const TOKEN = 'CHANGE_ME';
-
 const DATA_SHEET = '_voyage';
 const CHUNK = 45000;          // a cell holds max 50,000 chars
 const DRIVE_ROOT = 'Voyage';
 
-// Opening the URL in a browser shows nothing: all reads and writes need the secret word.
-function doGet() {
-  return json_({ ok: false, error: 'Voyage sync endpoint – use the app.' });
+function doGet(e) {
+  const raw = readData_();
+  return json_(raw ? JSON.parse(raw) : {});
 }
 
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
-    const denied = checkToken_(body);
-    if (denied) return json_(denied);
-    if (body.action === 'ping') return json_({ ok: true });
-    if (body.action === 'get') {
-      const raw = readData_();
-      return json_({ ok: true, data: raw ? JSON.parse(raw) : {} });
-    }
-    if (body.action === 'upload') return json_(upload_(body));
+    if (body && body.action === 'upload') return json_(upload_(body));
     if (!body || !body.data || !Array.isArray(body.data.trips)) {
       return json_({ ok: false, error: 'Invalid payload' });
     }
@@ -58,20 +47,6 @@ function doPost(e) {
   } catch (err) {
     return json_({ ok: false, error: String(err && err.message || err) });
   }
-}
-
-/* ---------- Secret word check (locks for 10 min after 20 wrong tries) ---------- */
-
-function checkToken_(b) {
-  if (TOKEN === 'CHANGE_ME' || !TOKEN) return { ok: false, error: 'Set your secret word (TOKEN) at the top of Code.gs' };
-  const cache = CacheService.getScriptCache();
-  const fails = Number(cache.get('fails') || 0);
-  if (fails >= 20) return { ok: false, error: 'Too many wrong secret words. Locked for 10 minutes.' };
-  if (!b || typeof b.token !== 'string' || b.token !== TOKEN) {
-    cache.put('fails', String(fails + 1), 600);
-    return { ok: false, error: 'Wrong secret word' };
-  }
-  return null;
 }
 
 /* ---------- Drive attachments ---------- */
