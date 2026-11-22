@@ -24,8 +24,12 @@ const CHUNK = 45000;          // a cell holds max 50,000 chars
 const DRIVE_ROOT = 'Voyage';
 
 function doGet(e) {
-  const raw = readData_();
-  return json_(raw ? JSON.parse(raw) : {});
+  try {
+    const raw = readData_();
+    return json_(raw ? JSON.parse(raw) : {});
+  } catch (err) {
+    return json_({ ok: false, error: String(err && err.message || err) });
+  }
 }
 
 function doPost(e) {
@@ -80,16 +84,18 @@ function readData_() {
 function writeData_(str) {
   const ss = SpreadsheetApp.getActive();
   const sh = ss.getSheetByName(DATA_SHEET) || ss.insertSheet(DATA_SHEET);
-  sh.clear();
+  sh.clearContents();
   const rows = [];
   for (let i = 0; i < str.length; i += CHUNK) rows.push([str.slice(i, i + CHUNK)]);
   if (rows.length) {
     sh.getRange(1, 1, rows.length, 1).setNumberFormat('@').setValues(rows);
   }
-  sh.hideSheet();
+  if (!sh.isSheetHidden()) sh.hideSheet();
 }
 
 function writeTables_(S) {
+  const ss = SpreadsheetApp.getActive();
+  const table_ = (name, head, rows) => writeTable_(ss, name, head, rows);
   const trips = S.trips || [];
   const each = (key, fn) => trips.flatMap(t => (t[key] || []).map(x => fn(t, x)));
   const toHome = (t, e) => (e.cur && e.cur !== t.ccy && e.cur === t.lcy && t.fx > 0) ? e.amt / t.fx : Number(e.amt) || 0;
@@ -111,15 +117,17 @@ function writeTables_(S) {
     trips.map(t => { const e = t.ess || {}; return [t.name, e.hotel, e.addr, e.addrLocal, e.phone, e.emerg, e.embassy, e.tz, e.plug, e.lang]; }));
 }
 
-function table_(name, head, rows) {
-  const ss = SpreadsheetApp.getActive();
+function writeTable_(ss, name, head, rows) {
+  const isNew = !ss.getSheetByName(name);
   const sh = ss.getSheetByName(name) || ss.insertSheet(name);
-  sh.clear();
+  sh.clearContents();
   const all = [head].concat(rows.map(r => r.map(v => (v == null ? '' : v))));
   // '@' keeps dates/times as plain text so they round-trip unchanged
   sh.getRange(1, 1, all.length, head.length).setNumberFormat('@').setValues(all);
-  sh.getRange(1, 1, 1, head.length).setFontWeight('bold');
-  sh.setFrozenRows(1);
+  if (isNew) {
+    sh.getRange(1, 1, 1, head.length).setFontWeight('bold');
+    sh.setFrozenRows(1);
+  }
 }
 
 function json_(obj) {

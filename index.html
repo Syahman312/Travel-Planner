@@ -23,7 +23,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(84px + env(safe-area-inset-bottom));-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
 body.lock{overflow:hidden}
 header{position:sticky;top:0;z-index:5;background:#000;border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 12px calc(16px + env(safe-area-inset-left));display:flex;gap:10px;align-items:center}
-header h1{font:600 18px system-ui,sans-serif;margin:0;flex:1;white-space:nowrap}header h1 span{color:var(--ink)}
+header h1{font:600 18px system-ui,sans-serif;margin:0;flex:1;white-space:nowrap}
 button,input,textarea,select{font:inherit;color:inherit}
 select,input,textarea{color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%;min-height:44px;font-size:16px;-webkit-appearance:none;appearance:none}
 select{background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:28px}
@@ -52,12 +52,11 @@ main{position:relative;overflow-x:clip;touch-action:pan-y pinch-zoom;min-height:
 h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-align:center;padding:20px}
 .done{text-decoration:line-through;color:var(--mute)}
 .dialog{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
-.dialog.on{display:flex}.dialog .card{width:100%;max-width:460px;max-height:92vh;overflow:auto;background:#0b0b0c;border-radius:16px;padding:18px;animation:up .22s ease-out}
+.dialog.on{display:flex}.dialog .card{width:100%;max-width:460px;max-height:92vh;max-height:92dvh;overflow:auto;overscroll-behavior:contain;background:#0b0b0c;border-radius:16px;padding:18px;animation:up .22s ease-out}
 @keyframes up{from{transform:translateY(24px);opacity:0}}
 @media(max-width:759px){.dialog{align-items:flex-end;padding:0}.dialog .card{max-width:100%;border-radius:22px 22px 0 0;margin:0;padding:8px 16px calc(18px + env(safe-area-inset-bottom));animation:sheet .28s cubic-bezier(.2,.8,.2,1)}
 .dialog .card::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:var(--line2);margin:0 auto 12px}}
 @keyframes sheet{from{transform:translateY(100%)}}
-.dialog .card{overscroll-behavior:contain;max-height:92dvh}
 /* small phones (iPhone SE / mini) */
 @media(max-width:359px){header h1 span{display:none}header h1 img{margin-right:0!important}.vw{padding-left:10px;padding-right:10px}.stat b{font-size:17px}}
 /* phones in landscape: slimmer bars */
@@ -76,7 +75,7 @@ h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-
 @media(min-width:1100px){
  body{padding-left:220px}nav{width:220px}
  .vw{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
- .vw>.full,.vw>.stats,.vw>.empty{grid-column:1/-1}
+ .vw>.full,.vw>.stats,.vw>.empty,.vw>.seg{grid-column:1/-1}
  .vw>.stats{margin-bottom:8px}.vw>.card[style*="margin-top"]{margin-top:0!important}
 }
 /* mouse & trackpad */
@@ -127,7 +126,6 @@ button.stat{text-align:left;width:100%;color:inherit;font:inherit;cursor:pointer
 .driver{position:fixed;inset:0;z-index:30;background:#fff;color:#000;display:none;flex-direction:column;justify-content:center;gap:18px;padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));text-align:center;cursor:pointer}
 .driver.on{display:flex}.driver .big{font-size:clamp(28px,7vw,60px);font-weight:700;line-height:1.25;overflow-wrap:anywhere}.driver .sm{font-size:clamp(18px,4vw,28px);color:#333}
 .kbd{font:12px ui-monospace,Menlo,monospace;border:1px solid var(--line2);border-radius:5px;padding:1px 6px;background:var(--c2)}
-@media(min-width:1100px){.vw>.seg{grid-column:1/-1}}
 @media(hover:none){.pc-only{display:none}}
 /* swipe between tabs */
 .swpan{position:absolute;left:0;right:0;margin:0 auto;pointer-events:none;will-change:transform}
@@ -220,19 +218,24 @@ const isPast=t=>t.end<today();
 function tzNow(tz){try{return new Date().toLocaleTimeString('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
 function tzDiff(tz){try{const d=new Date(),m=Math.round((new Date(d.toLocaleString('en-US',{timeZone:tz}))-new Date(d.toLocaleString('en-US')))/6e4);if(!m)return 'same time as you';const h=Math.abs(m)/60,s=(Number.isInteger(h)?h:h.toFixed(1))+'h';return s+(m>0?' ahead of you':' behind you')}catch(e){return ''}}
 const dlgOpen=()=>$('dlg').classList.contains('on');
+const isOn=id=>$(id).classList.contains('on');
+// itinerary grouped by day, sorted by date+time (untimed last)
+function byDay(t){const by={};t.itin.slice().sort((a,b)=>(a.date+(a.time||'99')).localeCompare(b.date+(b.time||'99'))).forEach(i=>(by[i.date]=by[i.date]||[]).push(i));return by}
+// [upcoming (soonest first), past (latest first)]
+const splitTrips=()=>[S.trips.filter(t=>!isPast(t)).sort((a,b)=>a.start.localeCompare(b.start)),S.trips.filter(isPast).sort((a,b)=>b.start.localeCompare(a.start))];
+// skip DOM write when markup unchanged
+const setHTML=(el,h)=>{if(el._h!==h){el.innerHTML=h;el._h=h}};
 
 S=load();
 
 /* ---------- render ---------- */
+const VIEWS={overview,itin,budget,pack:lists,book,settings};
+const viewOf=(k,empty='No trips yet. Tap “+ Trip” to start.')=>{const t=T();return !t&&k!=='settings'?`<div class="card empty">${empty}</div>`:VIEWS[k](t)};
 function render(){
- const sel=$('tripSel'),up=S.trips.filter(t=>!isPast(t)).sort((a,b)=>a.start.localeCompare(b.start)),past=S.trips.filter(isPast).sort((a,b)=>b.start.localeCompare(a.start));
- const opt=t=>`<option value="${t.id}" ${t.id===S.cur?'selected':''}>${esc(t.name)}</option>`;
- sel.innerHTML=S.trips.length?(up.length?`<optgroup label="Upcoming & current">${up.map(opt).join('')}</optgroup>`:'')+(past.length?`<optgroup label="Past trips">${past.map(opt).join('')}</optgroup>`:''):'<option>No trips</option>';
- sel.onchange=e=>setCur(e.target.value);
- $('nav').innerHTML=TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" ${k===tab?'aria-current="page"':''} onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg><span>${l}</span></button>`).join('');
- const t=T(),v=$('view');
- if(!t&&tab!=='settings')v.innerHTML='<div class="card empty">No trips yet. Tap “+ Trip” to start.</div>';
- else v.innerHTML=({overview,itin,budget,pack:lists,book,settings})[tab](t);
+ const [up,past]=splitTrips(),opt=t=>`<option value="${t.id}" ${t.id===S.cur?'selected':''}>${esc(t.name)}</option>`;
+ setHTML($('tripSel'),S.trips.length?(up.length?`<optgroup label="Upcoming & current">${up.map(opt).join('')}</optgroup>`:'')+(past.length?`<optgroup label="Past trips">${past.map(opt).join('')}</optgroup>`:''):'<option>No trips</option>');
+ setHTML($('nav'),TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" ${k===tab?'aria-current="page"':''} onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg><span>${l}</span></button>`).join(''));
+ const v=$('view');v.innerHTML=viewOf(tab);
  drawPill();hydrate(v);
 }
 function setCur(id){S.cur=id;persist();render()}
@@ -268,7 +271,7 @@ function essCard(t){const e=t.ess||{},has=Object.values(e).some(Boolean);
  ${r('🗣',(e.lang||e.phrases)&&`<b>${esc(e.lang||'Phrases')}</b>${e.phrases?`<div class="mute" style="white-space:pre-line">${esc(e.phrases)}</div>`:''}`)}
  </div></div>`}
 function tripsCard(){
- const up=S.trips.filter(t=>!isPast(t)).sort((a,b)=>a.start.localeCompare(b.start)),past=S.trips.filter(isPast).sort((a,b)=>b.start.localeCompare(a.start));
+ const [up,past]=splitTrips();
  const row=x=>`<div class="item tap" onclick="setCur('${x.id}');scrollTo(0,0)"><div class="grow"><b>${esc(x.name)}</b>${x.id===S.cur?' <span class="tag">open</span>':''}<div class="mute">${esc(x.dest)} · ${fmtD(x.start,{day:'numeric',month:'short',year:'numeric'})} · ${tripLen(x)} days</div></div><span class="mute">›</span></div>`;
  return `<div class="card"><h2>Upcoming & current</h2>${up.map(row).join('')||'<div class="empty">Nothing planned – tap “+ Trip”.</div>'}
  ${past.length?`<h2 style="margin-top:16px">Past trips</h2>${past.map(row).join('')}`:''}</div>`}
@@ -287,7 +290,7 @@ function closeDriver(){$('driver').classList.remove('on');try{window._wl?.releas
 
 /* ---------- itinerary ---------- */
 function itin(t){
- const by={};t.itin.slice().sort((a,b)=>(a.date+(a.time||'99')).localeCompare(b.date+(b.time||'99'))).forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
+ const by=byDay(t);
  return `<div class="card full"><div class="btns"><button class="btn" onclick="editItem('itin')">+ Add activity</button><button class="btn ghost" onclick="openShare()">Share / PDF</button></div></div>
  ${Object.keys(by).length?Object.entries(by).map(([d,l])=>`<div class="card"><h2>Day ${days(t.start,d)+1} · ${fmtD(d)}${d===today()?' <span class="tag">today</span>':''}</h2>${l.map(i=>`<div class="item tap" onclick="editItem('itin','${i.id}')"><span class="tag">${esc(i.time)||'—'}</span><div class="grow"><b>${esc(i.what)}</b>${i.where?`<div class="mute"><a href="${maps(i.where+(t.dest?', '+t.dest:''))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📍 ${esc(i.where)}</a></div>`:''}${i.note?`<div class="mute" style="white-space:pre-line">${esc(i.note)}</div>`:''}</div><span class="mute">›</span></div>`).join('')}</div>`).join(''):'<div class="card empty">No activities yet.</div>'}`;
 }
@@ -424,7 +427,7 @@ function uploadPending(){const p=pending();if(!S.sync)return msg('Save your Apps
 
 /* ---------- share / PDF ---------- */
 function shareText(t){
- const by={};t.itin.slice().sort((a,b)=>(a.date+(a.time||'99')).localeCompare(b.date+(b.time||'99'))).forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
+ const by=byDay(t);
  let s=`✈️ ${t.name}\n📍 ${t.dest} · ${fmtD(t.start,{day:'numeric',month:'short'})} – ${fmtD(t.end,{day:'numeric',month:'short',year:'numeric'})}\n`;
  Object.entries(by).forEach(([d,l])=>{s+=`\n*Day ${days(t.start,d)+1} · ${fmtD(d)}*\n`+l.map(i=>`${i.time||'•'} ${i.what}${i.where?' – '+i.where:''}`).join('\n')+'\n'});
  if(t.book.length)s+='\n*Bookings*\n'+t.book.map(b=>`${b.type}: ${b.ref}${b.detail?' – '+b.detail:''}`).join('\n')+'\n';
@@ -437,12 +440,11 @@ function openShare(){const t=T(),txt=shareText(t);window._share=txt;
  <button class="btn ghost" onclick="navigator.clipboard.writeText(_share).then(()=>toast(\'Copied\'),()=>{})">Copy</button>
  <button class="btn ghost" onclick="printTrip()">Save as PDF</button><button class="btn ghost" onclick="closeDlg()" style="margin-left:auto">Close</button></div>
  <p class="mute" style="margin-bottom:0">Save as PDF opens the print screen – choose “Save as PDF” (on iPhone: Print → Share → Save to Files).</p>`)}
-function buildPrint(){const t=T();if(!t)return;const e=t.ess||{};
- const by={};t.itin.slice().sort((a,b)=>(a.date+(a.time||'99')).localeCompare(b.date+(b.time||'99'))).forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
+function buildPrint(){const t=T();if(!t)return;const e=t.ess||{},by=byDay(t);
  $('printView').innerHTML=`<h1>${esc(t.name)}</h1><div class="p">${esc(t.dest)} · ${fmtD(t.start,{day:'numeric',month:'long'})} – ${fmtD(t.end,{day:'numeric',month:'long',year:'numeric'})} · ${tripLen(t)} days</div>
  <h2>Itinerary</h2>${Object.entries(by).map(([d,l])=>`<section><h3>Day ${days(t.start,d)+1} · ${fmtD(d,{weekday:'long',day:'numeric',month:'long'})}</h3><table>${l.map(i=>`<tr><td>${esc(i.time)||'—'}</td><td><b>${esc(i.what)}</b>${i.where?` · ${esc(i.where)}`:''}${i.note?`<div class="p">${esc(i.note)}</div>`:''}</td></tr>`).join('')}</table></section>`).join('')||'<p class="p">No activities.</p>'}
  ${t.book.length?`<h2>Bookings</h2><table>${t.book.map(b=>`<tr><td>${esc(b.type)}</td><td><b>${esc(b.ref)}</b>${b.date?' · '+fmtD(b.date):''}${b.detail?`<div class="p">${esc(b.detail)}</div>`:''}</td></tr>`).join('')}</table>`:''}
- ${Object.values(e).some(Boolean)?`<h2>Essentials</h2><table>${[['Hotel',[e.hotel,e.addr,e.addrLocal,e.phone].filter(Boolean).join('<br>')],['Emergency',esc(e.emerg)],['Embassy',esc(e.embassy)],['Time zone',esc(e.tz)],['Plug',esc(e.plug)],['Language',esc(e.lang)]].filter(r=>r[1]).map(r=>`<tr><td>${r[0]}</td><td>${r[0]==='Hotel'?r[1].split('<br>').map(esc).join('<br>'):r[1]}</td></tr>`).join('')}</table>`:''}`}
+ ${Object.values(e).some(Boolean)?`<h2>Essentials</h2><table>${[['Hotel',[e.hotel,e.addr,e.addrLocal,e.phone]],['Emergency',[e.emerg]],['Embassy',[e.embassy]],['Time zone',[e.tz]],['Plug',[e.plug]],['Language',[e.lang]]].map(([k,a])=>[k,a.filter(Boolean).map(esc).join('<br>')]).filter(r=>r[1]).map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>`:''}`}
 function printTrip(){closeDlg();buildPrint();setTimeout(()=>print(),350)}
 addEventListener('beforeprint',buildPrint);
 
@@ -491,7 +493,7 @@ function saveUrl(){const u=val('sU');if(u&&!/^https:\/\/script\.google(userconte
 function dlBackup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));a.download=`voyage-backup-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1e4)}
 async function restore(f){if(!f)return;try{const d=migrate(JSON.parse(await f.text()));if(!d)throw 0;confirmBox(`Replace all data on this device with this backup (${d.trips.length} trips)?`,()=>{const k={sync:S.sync,auto:S.auto,drive:S.drive};S=Object.assign(d,k);save();toast('Restored ✓')})}catch(e){toast('Not a valid Voyage backup')}}
 function msg(m){const e=$('sMsg');if(e)e.textContent=m}
-setInterval(()=>{const e=$('lt'),t=T();if(e&&t?.ess?.tz)e.textContent=tzNow(t.ess.tz)},30000);
+setInterval(()=>{if(document.hidden)return;const e=$('lt'),t=T();if(e&&t?.ess?.tz)e.textContent=tzNow(t.ess.tz)},30000);
 async function storageInfo(){const e=$('stor');if(!e)return;try{const s=await navigator.storage.estimate(),pz=await navigator.storage.persisted?.();e.textContent=`${(s.usage/1048576).toFixed(1)} MB used${pz?' · protected from clean-up':''}`}catch(x){e.textContent=''}}
 
 /* ---------- sync engine ---------- */
@@ -519,7 +521,7 @@ addEventListener('offline',()=>{if(S.sync)setSync('offline')});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')autoPull();else if(sync.st==='pending')push(true)});
 
 /* ---------- dialogs, toast ---------- */
-function dlg(h){const d=$('dlg'),was=d.classList.contains('on');$('dlgBody').innerHTML=h;d.classList.add('on');document.body.classList.add('lock');$('dlgBody').scrollTop=0;
+function dlg(h){const d=$('dlg'),was=dlgOpen();$('dlgBody').innerHTML=h;d.classList.add('on');document.body.classList.add('lock');$('dlgBody').scrollTop=0;
  if(!was)try{history.pushState({dlg:1},'')}catch(e){}
  if(matchMedia('(pointer:fine)').matches)setTimeout(()=>d.querySelector('input:not([type=checkbox]):not([type=file]),select,textarea')?.focus(),50)}
 function hideDlg(){$('dlg').classList.remove('on');document.body.classList.remove('lock');discardDraft()}
@@ -532,22 +534,22 @@ function toast(m,undo,fin){clearTimeout(tT);if(tFin){const f=tFin;tFin=null;f()}
 
 /* ---------- start-up ---------- */
 const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))tab=h;
-addEventListener('popstate',()=>{if($('viewer').classList.contains('on'))return closeViewer();if(dlgOpen())return hideDlg();
+$('tripSel').onchange=e=>setCur(e.target.value);
+addEventListener('popstate',()=>{if(isOn('viewer'))return closeViewer();if(dlgOpen())return hideDlg();
  const k=location.hash.slice(1);tab=TABS.some(t=>t[0]===k)?k:'overview';render()});
 addEventListener('keydown',e=>{const tg=e.target,typing=/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName);
- if(e.key==='Escape'){if($('viewer').classList.contains('on'))return closeViewer();if($('driver').classList.contains('on'))return closeDriver();return closeDlg()}
+ if(e.key==='Escape'){if(isOn('viewer'))return closeViewer();if(isOn('driver'))return closeDriver();return closeDlg()}
  if(e.key==='Enter'&&tg.tagName==='INPUT'&&!/checkbox|file/.test(tg.type)){const b=tg.closest('.card')?.querySelector('.btn:not(.ghost)');if(b){e.preventDefault();b.click()}return}
  if(typing||e.metaKey||e.ctrlKey||e.altKey||dlgOpen())return;
  if(/^[1-6]$/.test(e.key))go(TABS[e.key-1][0]);else if(e.key.toLowerCase()==='n')openTrip()});
 // Swipe left/right between tabs: the page follows your finger, the next tab slides in beside it, then snaps.
 (()=>{const m=$('main'),v=$('view');let S=null;
- const viewOf=k=>{const t=T();if(!t&&k!=='settings')return '<div class="card empty">No trips yet.</div>';try{return ({overview,itin,budget,pack:lists,book,settings})[k](t)}catch(e){return ''}};
- const panel=k=>{if(!k)return null;const d=document.createElement('div');d.className='vw swpan';d.setAttribute('aria-hidden','true');d.inert=true;d.innerHTML=viewOf(k);d.style.top=Math.max(0,scrollY-m.offsetTop)+'px';m.appendChild(d);hydrate(d);return d};
+ const panel=k=>{if(!k)return null;const d=document.createElement('div');d.className='vw swpan';d.setAttribute('aria-hidden','true');d.inert=true;try{d.innerHTML=viewOf(k,'No trips yet.')}catch(e){}d.style.top=Math.max(0,scrollY-m.offsetTop)+'px';m.appendChild(d);hydrate(d);return d};
  const reset=()=>{if(!S)return;[v,S.pp,S.pn].forEach(e=>{if(e){e.style.transition='';e.style.transform=''}});S.pp?.remove();S.pn?.remove();m.classList.remove('swp');S=null};
  const place=dx=>{v.style.transform=`translate3d(${dx}px,0,0)`;if(S.pp)S.pp.style.transform=`translate3d(${dx-S.W}px,0,0)`;if(S.pn)S.pn.style.transform=`translate3d(${dx+S.W}px,0,0)`};
  const hScroll=el=>{for(;el&&el!==m;el=el.parentElement)if(el.scrollWidth>el.clientWidth+2&&/(auto|scroll)/.test(getComputedStyle(el).overflowX))return true;return false};
  document.addEventListener('touchstart',e=>{if(S&&S.anim)return;reset();const t=e.touches[0];
-  if(e.touches.length>1||reduceMo()||dlgOpen()||$('viewer').classList.contains('on')||$('driver').classList.contains('on')||!m.contains(e.target)||
+  if(e.touches.length>1||reduceMo()||dlgOpen()||isOn('viewer')||isOn('driver')||!m.contains(e.target)||
    e.target.closest('select,textarea,label.switch,.thumb')||e.target===document.activeElement||hScroll(e.target)||t.clientX<16||t.clientX>innerWidth-16||(window.visualViewport&&visualViewport.scale>1.01))return;
   S={x:t.clientX,y:t.clientY,lock:0,dx:0,h:[[t.clientX,performance.now()]]}},{passive:true});
  document.addEventListener('touchmove',e=>{if(!S||S.anim)return;if(e.touches.length>1){if(S.lock){S.anim=1;place(0);setTimeout(reset,0)}else S=null;return}
