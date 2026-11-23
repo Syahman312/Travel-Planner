@@ -7,9 +7,14 @@ A single-file travel planner web app. No build step, no dependencies. Data is sa
 - **Overview**: countdown, budget used, to-do and packing progress, notes
 - **Essentials**: hotel address with a big **Show to driver** screen (local-language address), emergency numbers, embassy, live local time and time difference, plug type, language and phrases
 - **Itinerary**: activities by day with map links. **Share** to WhatsApp, or save as a PDF
+- **Map**: every activity as a numbered pin, coloured by day, with the hotel. Filter by day and open the day's route in Google Maps. A place that can't be found can be typed as coordinates (`35.71, 139.79`)
+- **Weather** for each trip day (Open-Meteo, no key needed). Forecast up to 16 days ahead; further out it shows last year's weather on the same dates
 - **Budget**: expenses in your home or the local currency (e.g. JPY), converted at the trip's rate (tap *Get today's rate*), plus a converter
+- **Split bill**: add who you're travelling with, pick who paid and who shares each expense, and see who owes who. Mark payments as paid, or send the list on WhatsApp
 - **Lists**: pre-trip **to-do** list with due dates (visa, insurance, bank, eSIM, currency…) and a **packing** list in sections with templates (Basics, Beach, City, Winter, Business, Umrah / Hajj)
 - **Bookings & documents**: attach photos or PDFs of tickets and your passport. Stored on the device and optionally saved to **Google Drive**
+- **Reminders**: each booking can have a time and a reminder. Flights get "online check-in opens" a day before and "leave for the airport" 3 hours before. The overview shows what's coming up, and the app can show alerts while it's open
+- **Calendar**: add bookings to **Google Calendar** automatically (a "Voyage" calendar, kept up to date when you sync), one at a time, or download an `.ics` file for iPhone Calendar or Outlook
 - **Tap any item to edit it**, and undo after deleting
 - **Auto-sync** to Google Sheets, with a status dot in the header
 - **Backup**: download and restore a file
@@ -34,11 +39,12 @@ Open `index.html` in a browser, or host it on GitHub Pages:
 3. **Deploy → New deployment → Web app**, Execute as **Me**, Who has access **Anyone**.
 4. Copy the `/exec` URL into the app: **Settings → Save URL**.
 5. Turn on **Auto-sync**. Changes save automatically, and opening the app on another device pulls the newest copy. **Push ↑** / **Pull ↓** do it by hand.
-6. Keep **Save attachments to Google Drive** on to upload booking photos and PDFs to *Google Drive → Voyage → trip name*. The files stay private to your account.
+6. (Optional) Turn on **Settings → Add bookings to Google Calendar**. Only events Voyage created are changed or removed.
+7. Keep **Save attachments to Google Drive** on to upload booking photos and PDFs to *Google Drive → Voyage → trip name*. The files stay private to your account.
 
-The sheet gets readable **Trips / Itinerary / Expenses / To-do / Packing / Bookings / Essentials** tabs, plus a hidden `_voyage` tab that holds the full data.
+The sheet gets readable **Trips / Itinerary / Expenses / Payments / To-do / Packing / Bookings / Essentials** tabs, plus a hidden `_voyage` tab that holds the full data.
 
-**Already deployed the old `Code.gs`?** Paste the new version, then **Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy**, and approve the new Google Drive permission. The URL stays the same.
+**Already deployed the old `Code.gs`?** Paste the new version, then **Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy**, and approve the new Google Drive and Google Calendar permissions. The URL stays the same.
 
 Photos are stored on each device, so another phone shows them as links to Drive instead. Backups don't include photos.
 
