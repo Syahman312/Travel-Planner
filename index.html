@@ -38,6 +38,7 @@ nav button.on{color:var(--acc);box-shadow:inset 0 3px var(--acc);font-weight:600
 main{position:relative;overflow-x:clip;touch-action:pan-y pinch-zoom;min-height:calc(100dvh - 150px)}
 .vw{max-width:720px;margin:0 auto;padding:14px calc(14px + env(safe-area-inset-right)) 14px calc(14px + env(safe-area-inset-left))}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
+#view>.card{content-visibility:auto;contain-intrinsic-size:auto 220px}
 .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 140px}
 .btn{border:0;background:var(--acc);color:var(--bg);border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
 .btn:active{transform:scale(.97)}
@@ -225,7 +226,9 @@ function migrate(s){
  s.sync=s.sync||'';s.auto=!!s.auto;s.cal=!!s.cal;s.notify=!!s.notify;s.drive=s.drive!==false;s.updated=+s.updated||0;
  if(!s.trips.some(t=>t.id===s.cur))s.cur=s.trips[0]?.id;return s}
 function load(){try{return migrate(JSON.parse(localStorage.getItem(KEY)))||seed()}catch(e){return seed()}}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Storage full – could not save')}}
+function persistNow(){clearTimeout(persist.t);persist.t=0;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Storage full – could not save')}}
+function persist(){if(!persist.t)persist.t=setTimeout(persistNow,200)}
+addEventListener('pagehide',()=>persist.t&&persistNow());
 function save(){S.updated=Date.now();persist();render();queueSync();schedNotes()}
 function uid(){return Math.random().toString(36).slice(2,9)}
 function seed(){const id=uid(),start='2027-03-10';return migrate({cur:id,trips:[{id,name:'Sample: Tokyo',dest:'Tokyo, Japan',start,end:'2027-03-15',budget:6000,ccy:'MYR',lcy:'JPY',fx:33,notes:'',
@@ -245,10 +248,11 @@ const days=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
 const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
 const addDays=(d,n)=>{const x=new Date(d+'T12:00');x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
 const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
-const num=(n,dp=2)=>Number(n||0).toLocaleString(undefined,{maximumFractionDigits:dp});
+const NF={},DF={},DM=new Map(),TF={};
+const num=(n,dp=2)=>(NF[dp]||(NF[dp]=new Intl.NumberFormat(undefined,{maximumFractionDigits:dp}))).format(Number(n||0));
 const money=(n,c)=>(c||T()?.ccy||'MYR')+' '+num(n);
 const fmt=n=>money(n,T()?.ccy);
-const fmtD=(d,o={weekday:'short',day:'numeric',month:'short'})=>d?new Date(d+'T00:00').toLocaleDateString('en-GB',o):'';
+const fmtD=(d,o={weekday:'short',day:'numeric',month:'short'})=>{if(!d)return '';const k=JSON.stringify(o),m=k+d;let r=DM.get(m);if(r===undefined){const x=new Date(d+'T00:00');r=isNaN(x)?'Invalid Date':(DF[k]||(DF[k]=new Intl.DateTimeFormat('en-GB',o))).format(x);if(DM.size>5000)DM.clear();DM.set(m,r)}return r};
 const cap=s=>s[0].toUpperCase()+s.slice(1);
 const maps=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
 const tel=s=>esc(s).replace(/\+?\d[\d -]{1,15}\d/g,m=>m.replace(/\D/g,'').length<6?m:`<a href="tel:${m.replace(/[^\d+]/g,'')}">${m}</a>`);
@@ -570,7 +574,7 @@ function pull(){if(!S.sync)return msg('Save your Apps Script URL first.');confir
 async function doPull(){setSync('busy');try{const d=await fetchRemote();if(d&&d.trips){adopt(d);setSync('ok');toast('Pulled ✓')}else{setSync('idle');toast('No data in the sheet yet – push first')}}catch(e){setSync(navigator.onLine?'err':'offline',e.message)}}
 addEventListener('online',()=>{if(S.auto&&S.sync)(['offline','err','pending'].includes(sync.st)?push(true):autoPull())});
 addEventListener('offline',()=>{if(S.sync)setSync('offline')});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')autoPull();else if(sync.st==='pending')push(true)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')autoPull();else{if(persist.t)persistNow();if(sync.st==='pending')push(true)}});
 
 /* ---------- split bill ---------- */
 const splitOn=t=>t.people.length>1;
@@ -596,7 +600,7 @@ function unPay(id){const t=T(),i=t.pay.findIndex(x=>x.id===id);if(i<0)return;con
 
 /* ---------- time zones, reminders & calendar ---------- */
 const tzName=z=>String(z||'').split('/').pop().replace(/_/g,' ');
-function tzOff(tz,ms){try{const p={};new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(new Date(ms)).forEach(x=>p[x.type]=x.value);
+function tzOff(tz,ms){try{const p={};(TF[tz]||(TF[tz]=new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}))).formatToParts(new Date(ms)).forEach(x=>p[x.type]=x.value);
  return Date.UTC(+p.year,p.month-1,+p.day,+p.hour%24,+p.minute,+p.second)-Math.floor(ms/1e3)*1e3}catch(e){return 0}}
 function zoned(d,tm,tz){const [y,m,dd]=d.split('-').map(Number),[h,mi]=(tm||'00:00').split(':').map(Number),g=Date.UTC(y,m-1,dd,h||0,mi||0);let u=g-tzOff(tz,g);return g-tzOff(tz,u)}
 function bkTz(t,b){const d=t.ess?.tz;if(!d)return HOME_TZ;const m=b.tz||'auto';return m==='home'?HOME_TZ:m==='dest'?d:(b.type==='Flight'&&b.date<=t.start)?HOME_TZ:d}
