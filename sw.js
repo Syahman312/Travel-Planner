@@ -1,6 +1,6 @@
 // App files: network-first, but fall back to cache after 3s (slow roaming data) or when offline.
 // Leaflet (versioned CDN files): cache-first, so maps work offline once opened. Bump C to force a refresh.
-const C='voyage-v7',LIB='voyage-lib-1',A=['./','index.html','manifest.json','icon.svg','icon-192.png','icon-512.png','apple-touch-icon.png'];
+const C='voyage-v8',LIB='voyage-lib-1',A=['./','index.html','manifest.json','icon.svg','icon-192.png','icon-512.png','apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(A)));self.skipWaiting()});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C&&x!==LIB).map(x=>caches.delete(x)))).then(()=>clients.claim())));
 const cached=q=>caches.match(q,{ignoreSearch:true}).then(r=>r||(q.mode==='navigate'?caches.match('index.html'):undefined));
