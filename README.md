@@ -15,6 +15,13 @@ A single-file travel planner web app. No build step, no dependencies. Data is sa
 - **Bookings & documents**: attach photos or PDFs of tickets and your passport. Stored on the device and optionally saved to **Google Drive**
 - **Reminders**: each booking can have a time and a reminder. Flights get "online check-in opens" a day before and "leave for the airport" 3 hours before. The overview shows what's coming up, and the app can show alerts while it's open
 - **Calendar**: add bookings to **Google Calendar** automatically (a "Voyage" calendar, kept up to date when you sync), one at a time, or download an `.ics` file for iPhone Calendar or Outlook
+- **Interactive charts** on every tab (hover on a computer, tap on a phone to see the numbers; tap again to open):
+  - Overview: plans per day and days away per year
+  - Itinerary: day planner showing each activity by time
+  - Budget: spending by category (tap to filter), spending per day or running total against the budget, and who owes who
+  - Lists: to-do progress and packing by section
+  - Bookings: timeline of all bookings
+  - Settings: storage used
 - **Tap any item to edit it**, and undo after deleting
 - **Auto-sync** to Google Sheets, with a status dot in the header
 - **Backup**: download and restore a file
