@@ -21,7 +21,7 @@ A single-file travel planner web app. No build step, no dependencies. Data is sa
 - **Works on every device**
   - **Swipe left/right** between tabs: the next tab follows your finger and snaps into place. Tapping a tab slides it in from the matching side
   - iPhone and Android: bottom tab bar, notch and home-bar safe areas, no zoom-on-tap, the right number keypad, Android back button closes pop-ups
-  - iPad, tablets and PC: sidebar navigation, two-column layout on wide screens, hover states
+  - iPad, tablets and PC: floating side panel with a sliding highlight; hide it with the button at its bottom (or `\`) for more room. Two-column layout on wide screens, hover states
   - Keyboard: `1`–`6` switch tabs, `N` new trip, `Enter` adds, `Esc` closes
   - **Install to home screen** (Safari → Share → Add to Home Screen, or Chrome → Install app). Works offline after the first visit.
   - Printable itinerary (browser Print)

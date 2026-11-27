@@ -64,23 +64,39 @@ h2{font-size:16px;font-weight:700;margin:0 0 10px}.empty{color:var(--mute);text-
 @media(orientation:landscape) and (max-height:500px){nav button{min-height:40px;flex-direction:row;justify-content:center;gap:6px;font-size:12px;padding:6px 2px}nav svg{width:18px;height:18px}header{position:static}}
 /* tablets & PCs: side navigation */
 @media(min-width:744px){
- body{padding-bottom:24px;padding-left:200px}
- nav{top:0;right:auto;width:200px;flex-direction:column;gap:2px;border-top:0;border-right:1px solid var(--line);padding:calc(76px + env(safe-area-inset-top)) 12px 16px calc(12px + env(safe-area-inset-left));background:var(--card)}
- nav button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;font-size:15px;padding:11px 14px;border-radius:10px;min-height:44px}
- nav button.on{box-shadow:none;background:var(--c2)}
+ body{padding-bottom:24px;padding-left:calc(224px + env(safe-area-inset-left));transition:padding-left .28s cubic-bezier(.2,.8,.2,1)}
+ /* floating side panel */
+ nav{top:calc(74px + env(safe-area-inset-top));bottom:12px;left:calc(12px + env(safe-area-inset-left));right:auto;width:200px;flex-direction:column;gap:2px;padding:10px;
+  border:1px solid var(--line2);border-radius:18px;background:color-mix(in srgb,var(--card) 80%,transparent);box-shadow:0 12px 32px #000c,inset 0 1px #ffffff0d;overflow-y:auto;overscroll-behavior:contain;
+  transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .28s ease;animation:navIn .28s cubic-bezier(.2,.8,.2,1)}
+ @keyframes navIn{from{transform:translateX(calc(-100% - 24px));opacity:0}}
+ nav button{position:relative;z-index:1;flex:none;flex-direction:row;justify-content:flex-start;gap:12px;font-size:15px;padding:11px 14px;border-radius:10px;min-height:44px;transition:color .28s}
+ nav button.on{box-shadow:none;background:none}
  nav svg{width:20px;height:20px}
+ nav .ind{display:block;position:absolute;left:10px;right:10px;top:0;height:44px;border-radius:10px;background:var(--c2);pointer-events:none}
+ nav .ind::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--cy)}
+ nav.ready .ind{transition:transform .28s cubic-bezier(.2,.8,.2,1),height .28s cubic-bezier(.2,.8,.2,1)}
+ nav .navx{display:flex;margin-top:auto;color:var(--mute);font-size:13.5px}
+ body.navoff{padding-left:calc(0px + env(safe-area-inset-left))}
+ body.navoff nav{transform:translateX(calc(-100% - 24px));opacity:0;pointer-events:none}
+ #navOpen{display:grid;place-items:center;position:fixed;z-index:4;top:calc(74px + env(safe-area-inset-top));left:calc(12px + env(safe-area-inset-left));width:44px;height:44px;border-radius:14px;border:1px solid var(--line2);
+  background:color-mix(in srgb,var(--card) 80%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:var(--ink);box-shadow:0 8px 24px #000c;cursor:pointer;
+  transform:translateX(-72px);opacity:0;pointer-events:none;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .28s ease}
+ body.navoff #navOpen{transform:none;opacity:1;pointer-events:auto}
+ body.navoff .vw{padding-left:72px}
  .vw{max-width:1100px;padding:20px 28px}
  #tripSel{max-width:280px!important}
 }
 /* large screens: two-column card layout */
 @media(min-width:1100px){
- body{padding-left:220px}nav{width:220px}
+ body{padding-left:calc(244px + env(safe-area-inset-left))}nav{width:220px}
  .vw{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
  .vw>.full,.vw>.stats,.vw>.empty{grid-column:1/-1}
  .vw>.stats{margin-bottom:8px}.vw>.card[style*="margin-top"]{margin-top:0!important}
 }
 /* mouse & trackpad */
 @media(hover:hover){.btn:hover{filter:brightness(1.12)}.btn.ghost:hover{background:var(--c2)}nav button:hover{color:var(--ink)}nav button.on:hover{color:var(--acc)}.x:hover{color:var(--warn);background:var(--c2)}}
+@media(min-width:744px) and (prefers-reduced-motion:no-preference){nav button:not(.on):hover{transform:translateX(2px)}nav button{transition:color .28s,transform .28s cubic-bezier(.2,.8,.2,1)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ---- v2 components ---- */
@@ -118,7 +134,8 @@ button.stat{text-align:left;width:100%;color:inherit;font:inherit;cursor:pointer
 .warnbox{border-color:#4a3410;color:var(--amb)}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom));background:#1a1a1a;border:1px solid #333;padding:6px 6px 6px 16px;border-radius:99px;display:none;gap:12px;align-items:center;z-index:12;font-size:14px;white-space:nowrap;box-shadow:0 6px 20px #000c}
 #toast.on{display:flex}#toast button{padding:7px 14px}
-@media(min-width:744px){#toast{bottom:24px;margin-left:100px}}
+@media(min-width:744px){#toast{bottom:24px;margin-left:110px;transition:margin-left .28s}body.navoff #toast{margin-left:0}}
+@media(max-width:743px){nav .ind,nav .navx,#navOpen{display:none}}
 .viewer{position:fixed;inset:0;z-index:30;background:#000;display:none;flex-direction:column}.viewer.on{display:flex}
 .vbar{display:flex;gap:8px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 10px calc(12px + env(safe-area-inset-left));border-bottom:1px solid var(--line)}
 .vbar span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -165,6 +182,7 @@ main.swp #view{will-change:transform}
 <body>
 <header><h1><img src="icon.svg" alt="" width="28" height="28" style="vertical-align:-7px;border-radius:7px;margin-right:6px"><span>Voyage</span></h1><button id="pill" class="pill" onclick="go('settings')" aria-label="Sync status"><i class="dot"></i><span>Local only</span></button><select id="tripSel" style="max-width:200px;min-width:0" aria-label="Current trip"></select><button class="btn sm" style="white-space:nowrap;flex:none" onclick="openTrip()">+ Trip</button></header>
 <nav id="nav" aria-label="Sections"></nav>
+<button id="navOpen" onclick="toggleNav()" aria-label="Show side panel" title="Show side panel"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 <main id="main"><div id="view" class="vw"></div></main>
 
 <div class="dialog" id="dlg" onclick="if(event.target===this)closeDlg()"><div class="card" id="dlgBody" role="dialog" aria-modal="true"></div></div>
@@ -251,12 +269,17 @@ function render(){
  const opt=t=>`<option value="${t.id}" ${t.id===S.cur?'selected':''}>${esc(t.name)}</option>`;
  sel.innerHTML=S.trips.length?(up.length?`<optgroup label="Upcoming & current">${up.map(opt).join('')}</optgroup>`:'')+(past.length?`<optgroup label="Past trips">${past.map(opt).join('')}</optgroup>`:''):'<option>No trips</option>';
  sel.onchange=e=>setCur(e.target.value);
- $('nav').innerHTML=TABS.map(([k,l])=>`<button class="${k===tab?'on':''}" ${k===tab?'aria-current="page"':''} onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg><span>${l}</span></button>`).join('');
+ const nv=$('nav');if(!nv.firstChild){nv.innerHTML='<i class="ind" aria-hidden="true"></i>'+TABS.map(([k,l])=>`<button data-k="${k}" onclick="go('${k}')"><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg><span>${l}</span></button>`).join('')+'<button class="navx" onclick="toggleNav()" aria-label="Hide side panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span>Hide panel</span></button>';requestAnimationFrame(()=>requestAnimationFrame(()=>nv.classList.add('ready')))}
+ nv.querySelectorAll('button[data-k]').forEach(b=>{const on=b.dataset.k===tab;b.classList.toggle('on',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});placeInd();
  const t=T(),v=$('view');
  if(!t&&tab!=='settings')v.innerHTML='<div class="card empty">No trips yet. Tap “+ Trip” to start.</div>';
  else v.innerHTML=({overview,itin,budget,pack:lists,book,settings})[tab](t);
  drawPill();hydrate(v);
 }
+function placeInd(){const nv=$('nav'),b=nv.querySelector('button.on'),i=nv.querySelector('.ind');if(b&&i){i.style.transform=`translateY(${b.offsetTop}px)`;i.style.height=b.offsetHeight+'px'}}
+function toggleNav(){const off=document.body.classList.toggle('navoff');try{localStorage.setItem('voyage_nav',off?'off':'')}catch(e){}(off?$('navOpen'):$('nav').querySelector('button.on'))?.focus({preventScroll:true});buzz(6)}
+try{if(localStorage.getItem('voyage_nav')==='off')document.body.classList.add('navoff')}catch(e){}
+addEventListener('resize',placeInd);
 function setCur(id){S.cur=id;persist();render()}
 function go(k,swiped){if(k===tab)return scrollTo({top:0,behavior:'smooth'});const dir=Math.sign(ORDER.indexOf(k)-ORDER.indexOf(tab));tab=k;try{history.pushState(null,'','#'+k)}catch(e){}render();scrollTo(0,0);
  if(!swiped&&!reduceMo()){const v=$('view');v.style.setProperty('--d',dir*48+'px');v.classList.remove('tin');void v.offsetWidth;v.classList.add('tin');clearTimeout(v._t);v._t=setTimeout(()=>v.classList.remove('tin'),320)}}
@@ -715,6 +738,7 @@ addEventListener('keydown',e=>{const tg=e.target,typing=/^(INPUT|TEXTAREA|SELECT
  if(e.key==='Escape'){if($('mapv').classList.contains('on'))return closeMap();if($('viewer').classList.contains('on'))return closeViewer();if($('driver').classList.contains('on'))return closeDriver();return closeDlg()}
  if(e.key==='Enter'&&tg.tagName==='INPUT'&&!/checkbox|file/.test(tg.type)){const b=tg.closest('.card')?.querySelector('.btn:not(.ghost)');if(b){e.preventDefault();b.click()}return}
  if(typing||e.metaKey||e.ctrlKey||e.altKey||dlgOpen())return;
+ if(e.key==='\\'&&innerWidth>=744)return toggleNav();
  if(/^[1-6]$/.test(e.key))go(TABS[e.key-1][0]);else if(e.key.toLowerCase()==='n')openTrip()});
 // Swipe left/right between tabs: the page follows your finger, the next tab slides in beside it, then snaps.
 (()=>{const m=$('main'),v=$('view');let S=null;
